@@ -14,6 +14,11 @@ data class MyNotification(
         object Default: Icon()
         object Warning: Icon()
         object Error: Icon()
-        data class Custom(val base64Icon: String)
+        @Serializable
+        data class Custom(val base64Icon: String): Icon() {
+            override fun toString(): String {
+                return "Custom(base64 omitted for brevity)"
+            }
+        }
     }
 }

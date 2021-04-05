@@ -37,22 +37,44 @@ fun Application.module() {
 
     routing {
         put("/") {
-            val notification = call.receive<MyNotification>()
-            log.debug("Notification received: $notification")
-            val xsoMessage = XsoMessage(
-                title = notification.titleRtf,
-                content = notification.contentRtf,
-                timeout = notification.durationSecs
-            )
-            val xsoJson = json.encodeToString(xsoMessage)
-            log.debug("Converted to XsoMessage: $xsoMessage, JSON: $xsoJson")
-            val byteArray = xsoJson.toByteArray()
-            val sendResult = async(Dispatchers.IO) {
-                log.debug("Sending to $localHost:${config.xsOverlayPort}")
-                socket.send(DatagramPacket(byteArray, byteArray.size, localHost, config.xsOverlayPort))
+            try {
+                val notification = call.receive<MyNotification>()
+                log.debug("Notification received: $notification")
+                val sendResult = async(Dispatchers.IO) {
+                    val xsoMessage = notification.toXsoMessage()
+                    log.debug("Converted to XsoMessage: $xsoMessage")
+                    val byteArray = json.encodeToString(xsoMessage).toByteArray()
+                    if (byteArray.size > MAX_DATAGRAM_SIZE)
+                        error("This message is too big (${byteArray.size} bytes, should be < $MAX_DATAGRAM_SIZE bytes)")
+
+                    log.debug("Sending to $localHost:${config.xsOverlayPort}")
+                    socket.send(DatagramPacket(byteArray, byteArray.size, localHost, config.xsOverlayPort))
+                }
+                sendResult.await()
+                call.respond(HttpStatusCode.Created)
+            } catch (throwable: Throwable) {
+                log.error("Error handling request", throwable)
+                throw throwable
             }
-            sendResult.await()
-            call.respond(HttpStatusCode.Created)
         }
     }
 }
+
+private fun MyNotification.toXsoMessage(): XsoMessage {
+    return XsoMessage(
+        title = titleRtf,
+        content = contentRtf,
+        icon = icon.xsoIcon,
+        useBase64Icon = icon is MyNotification.Icon.Custom,
+        timeout = durationSecs
+    )
+}
+
+private val MyNotification.Icon.xsoIcon: String get() = when (this) {
+    is MyNotification.Icon.Custom -> base64Icon
+    is MyNotification.Icon.Default -> "default"
+    is MyNotification.Icon.Error -> "error"
+    is MyNotification.Icon.Warning -> "warning"
+}
+
+const val MAX_DATAGRAM_SIZE = 65_507
