@@ -43,9 +43,16 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
         val extras = statusBarNotification.notification.extras
         val title = extras.getString(Notification.EXTRA_TITLE) ?: ""
         val content = extras.getString(Notification.EXTRA_TEXT) ?: ""
+
         if (title.isBlank() && content.isBlank()) {
             Log.i(LOG_TAG, "Notification seen, blank title + content so not forwarding")
+            return
         }
+        if (exclusions.any { title.contains(it) || content.contains(it) }) {
+            Log.i(LOG_TAG, "Notification seen, matches exclusion list so not forwarding (title: $title content: $content)")
+            return
+        }
+
         val iconBitmap: Bitmap? = statusBarNotification.notification.createIconBitmap(this)
         Log.i(LOG_TAG, "Notification seen, title: $title, content: $content")
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -89,7 +96,7 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
         return if (intrinsicWidth > 0 && intrinsicHeight > 0) {
             val largestSide = max(intrinsicWidth, intrinsicHeight)
             val scale = (MAX_ICON_SIZE / largestSide).coerceAtMost(1.0f)
-            Log.v("JONDEBUG", "scaling $scale (was $intrinsicWidth x $intrinsicHeight)")
+            Log.v(LOG_TAG, "scaling $scale (was $intrinsicWidth x $intrinsicHeight)")
             val bitmap = Bitmap.createBitmap((intrinsicWidth * scale).toInt(), (intrinsicHeight * scale).toInt(), Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             setBounds(0, 0, (canvas.width * scale).toInt(), (canvas.height * scale).toInt())
@@ -109,3 +116,7 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
 
 private const val LOG_TAG = "NotificationListener"
 private const val MAX_ICON_SIZE = 96f
+
+private val exclusions = listOf(
+    "Pebble Time"
+)
