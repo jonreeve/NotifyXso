@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class XsoMessage(
-    val messageType: Int = 1,
-    val index: Int = 0,
+    val messageType: Int = 1, // notification
+    val index: Int = 0, // unused, only for media player messageType
 //    val volume: Float = 0.7f,
 //    val audioPath: String = "default",
     val timeout: Float = 2f,
