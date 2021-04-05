@@ -11,8 +11,11 @@ data class MyNotification(
 ) {
     @Serializable
     sealed class Icon {
+        @Serializable
         object Default: Icon()
+        @Serializable
         object Warning: Icon()
+        @Serializable
         object Error: Icon()
         @Serializable
         data class Custom(val base64Icon: String): Icon() {

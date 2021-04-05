@@ -4,13 +4,17 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.widget.doAfterTextChanged
+import com.wasabicode.notificationstoxso.server.types.MyNotification
 import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
@@ -22,6 +26,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private lateinit var editTextHost: EditText
     private lateinit var editTextPort: EditText
     private lateinit var editTextDuration: EditText
+    private lateinit var iconSpinner: Spinner
+    private lateinit var editTextExclusions: EditText
     private lateinit var testNotificationButton: Button
 
     private val enableOnStartArg by lazy { intent.getBooleanExtra(EXTRA_ENABLE_ON_START, false) }
@@ -52,6 +58,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         editTextHost = findViewById(R.id.edit_text_host)
         editTextPort = findViewById(R.id.edit_text_port)
         editTextDuration = findViewById(R.id.edit_text_duration)
+        iconSpinner = findViewById(R.id.notification_icon_spinner)
+        editTextExclusions = findViewById(R.id.edit_text_exclusions)
         testNotificationButton = findViewById(R.id.create_notification_button)
     }
 
@@ -60,6 +68,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         editTextHost.setText(config.host)
         editTextPort.setText(config.port.toString())
         editTextDuration.setText(decimalFormat.format(config.durationSecs))
+        iconSpinner.setSelection(3)
+        editTextExclusions.setText(config.exclusions.joinToString(separator = "\n"))
     }
 
     private fun initListeners() {
@@ -75,6 +85,23 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             runCatching { decimalFormat.parse(it.toString()) }.getOrNull()?.toFloat()?.let {
                 config.durationSecs = it
             }
+        }
+        iconSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                config.preferredIcon = when (position) {
+                    1 -> MyNotification.Icon.Warning::class
+                    2 -> MyNotification.Icon.Error::class
+                    3 -> MyNotification.Icon.Custom::class
+                    else -> MyNotification.Icon.Default::class
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                config.preferredIcon = MyNotification.Icon.Default::class
+            }
+        }
+        editTextExclusions.doAfterTextChanged {
+            config.exclusions = it?.split("\n") ?: emptyList()
         }
     }
 

@@ -48,12 +48,13 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
             Log.i(LOG_TAG, "Notification seen, blank title + content so not forwarding")
             return
         }
-        if (exclusions.any { title.contains(it) || content.contains(it) }) {
+        if (config.exclusions.any { title.contains(it) || content.contains(it) }) {
             Log.i(LOG_TAG, "Notification seen, matches exclusion list so not forwarding (title: $title content: $content)")
             return
         }
 
-        val iconBitmap: Bitmap? = statusBarNotification.notification.createIconBitmap(this)
+        val iconBitmap: Bitmap? =
+            if (config.preferredIcon == Icon.Custom::class) statusBarNotification.notification.createIconBitmap(this) else null
         Log.i(LOG_TAG, "Notification seen, title: $title, content: $content")
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
             Log.w(LOG_TAG, "Exception!", throwable)
@@ -68,7 +69,7 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
                         titleRtf = title,
                         contentRtf = content,
                         durationSecs = config.durationSecs,
-                        icon = iconBitmap?.toCustomIcon() ?: Icon.Default
+                        icon = iconBitmap?.toCustomIcon() ?: config.preferredIcon.objectInstance ?: Icon.Default
                     )
                 ) {
                     contentType(ContentType.Application.Json)
@@ -116,7 +117,3 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
 
 private const val LOG_TAG = "NotificationListener"
 private const val MAX_ICON_SIZE = 96f
-
-private val exclusions = listOf(
-    "Pebble Time"
-)
