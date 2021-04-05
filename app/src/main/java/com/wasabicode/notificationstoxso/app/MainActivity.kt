@@ -4,7 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -14,7 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.widget.doAfterTextChanged
 import java.text.DecimalFormat
 
-class ConfigurationActivity : AppCompatActivity(R.layout.activity_configuration) {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var config: Configuration
     private val decimalFormat = DecimalFormat.getNumberInstance()
@@ -34,15 +33,18 @@ class ConfigurationActivity : AppCompatActivity(R.layout.activity_configuration)
 
         config = (application as App).configuration
 
-        if (enableOnStartArg) { config.enabled = true }
+        processArgs()
+        findViews()
+        initViewValues()
+        initListeners()
+    }
+
+    private fun processArgs() {
+        if (enableOnStartArg) {
+            config.enabled = true
+        }
         hostArg?.let { config.host = it }
         portArg.takeIf { it >= 0 }?.let { config.port = it }
-
-        findViews()
-
-        initViewValues()
-
-        initListeners()
     }
 
     private fun findViews() {
@@ -71,7 +73,6 @@ class ConfigurationActivity : AppCompatActivity(R.layout.activity_configuration)
         }
         editTextDuration.doAfterTextChanged {
             runCatching { decimalFormat.parse(it.toString()) }.getOrNull()?.toFloat()?.let {
-                Log.v("JONDEBUG", "parsed $it")
                 config.durationSecs = it
             }
         }

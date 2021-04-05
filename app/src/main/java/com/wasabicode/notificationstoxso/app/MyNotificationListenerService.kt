@@ -27,18 +27,17 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
         coroutineScope.cancel()
     }
 
-    @Suppress("DEPRECATION")
     override fun onNotificationPosted(statusBarNotification: StatusBarNotification) {
         val extras = statusBarNotification.notification.extras
         val title = extras.getString(Notification.EXTRA_TITLE) ?: ""
         val content = extras.getString(Notification.EXTRA_TEXT) ?: ""
-        Log.i("JONDEBUG", "Notification seen, title: $title, content: $content")
+        Log.i(LOG_TAG, "Notification seen, title: $title, content: $content")
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            Log.w("JONDEBUG", "Exception!", throwable)
+            Log.w(LOG_TAG, "Exception!", throwable)
         }
         if (config.enabled) {
             coroutineScope.launch(coroutineExceptionHandler) {
-                Log.i("JONDEBUG", "Sending to ${config.host}:${config.port}")
+                Log.i(LOG_TAG, "Sending to ${config.host}:${config.port}")
                 httpClient.put<Unit>(
                     host = config.host,
                     port = config.port,
@@ -54,3 +53,5 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
         }
     }
 }
+
+private const val LOG_TAG = "NotificationListener"
