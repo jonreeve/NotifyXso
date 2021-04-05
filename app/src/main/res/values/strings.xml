@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NotificationsToXso</string>
+    <string name="notification_listener_service_name">NotificationsToXso Service</string>
+</resources>

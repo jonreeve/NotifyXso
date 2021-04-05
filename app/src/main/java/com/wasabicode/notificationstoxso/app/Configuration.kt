@@ -1,0 +1,8 @@
+package com.wasabicode.notificationstoxso.app
+
+class Configuration {
+    var enabled: Boolean = false
+    var host: String = "192.168.1.71"
+    var port: Int = 43210
+    var durationSecs: Float = 2.0f
+}
