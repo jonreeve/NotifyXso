@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     companion object {
-        const val EXTRA_ENABLE_ON_START = "go"
+        const val EXTRA_ENABLE_ON_START = "on"
         const val EXTRA_HOST = "host"
         const val EXTRA_PORT = "port"
     }
