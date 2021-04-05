@@ -11,6 +11,9 @@ class Configuration {
     var exclusions: List<String> = listOf(
         "Pebble Time",
         "Checking for new messages",
+        "Loading...",
+        "USB debugging connected",
+        "Charging this device via USB"
     )
     var preferredIcon: KClass<out MyNotification.Icon> = MyNotification.Icon.Custom::class
 }
