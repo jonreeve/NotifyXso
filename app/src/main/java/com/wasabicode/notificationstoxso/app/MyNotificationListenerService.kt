@@ -12,6 +12,7 @@ import android.service.notification.StatusBarNotification
 import android.util.Base64
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.wasabicode.notificationstoxso.app.config.Configuration
 import com.wasabicode.notificationstoxso.server.types.MyNotification
 import com.wasabicode.notificationstoxso.server.types.MyNotification.Icon
 import io.ktor.client.HttpClient

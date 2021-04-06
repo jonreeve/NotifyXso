@@ -9,6 +9,7 @@ import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.doAfterTextChanged
+import com.wasabicode.notificationstoxso.app.config.Configuration
 import com.wasabicode.notificationstoxso.server.types.MyNotification
 import java.text.DecimalFormat
 
@@ -96,7 +97,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             }
         }
         editTextExclusions.doAfterTextChanged {
-            config.exclusions = it?.split("\n") ?: emptyList()
+            config.exclusions = it?.split("\n")?.toSet() ?: emptySet()
         }
     }
 
