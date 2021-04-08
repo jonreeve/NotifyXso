@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.doAfterTextChanged
 import com.wasabicode.notificationstoxso.app.config.Configuration
-import com.wasabicode.notificationstoxso.server.types.MyNotification
+import com.wasabicode.notificationstoxso.app.config.PreferredIcon
 import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         editTextHost.setText(config.host)
         editTextPort.setText(config.port.toString())
         editTextDuration.setText(decimalFormat.format(config.durationSecs))
-        iconSpinner.setSelection(3)
+        iconSpinner.setSelection(config.preferredIcon.ordinal)
         editTextExclusions.setText(config.exclusions.joinToString(separator = "\n"))
     }
 
@@ -84,16 +84,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
         iconSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                config.preferredIcon = when (position) {
-                    1 -> MyNotification.Icon.Warning::class
-                    2 -> MyNotification.Icon.Error::class
-                    3 -> MyNotification.Icon.Custom::class
-                    else -> MyNotification.Icon.Default::class
-                }
+                config.preferredIcon = PreferredIcon.values()[position]
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                config.preferredIcon = MyNotification.Icon.Default::class
+                config.preferredIcon = PreferredIcon.Default
             }
         }
         editTextExclusions.doAfterTextChanged {

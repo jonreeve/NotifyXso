@@ -13,8 +13,8 @@ import android.util.Base64
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.wasabicode.notificationstoxso.app.config.Configuration
+import com.wasabicode.notificationstoxso.app.config.PreferredIcon
 import com.wasabicode.notificationstoxso.server.types.MyNotification
-import com.wasabicode.notificationstoxso.server.types.MyNotification.Icon
 import io.ktor.client.HttpClient
 import io.ktor.client.request.put
 import io.ktor.http.ContentType
@@ -54,15 +54,19 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
             return
         }
 
-        val iconBitmap: Bitmap? =
-            if (config.preferredIcon == Icon.Custom::class) statusBarNotification.notification.createIconBitmap(this) else null
         Log.i(LOG_TAG, "Notification seen, title: $title, content: $content")
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
             Log.w(LOG_TAG, "Exception!", throwable)
         }
-        Log.i(LOG_TAG, "Sending to ${config.host}:${config.port}")
         if (config.enabled) {
+            val context = this
             coroutineScope.launch(coroutineExceptionHandler) {
+                Log.i(LOG_TAG, "Sending to ${config.host}:${config.port}")
+                val iconBitmapBase64 = when (config.preferredIcon) {
+                    PreferredIcon.Custom -> statusBarNotification.notification.createIconBitmap(context)?.toBase64()
+                    else -> null
+                }
+
                 httpClient.put<Unit>(
                     host = config.host,
                     port = config.port,
@@ -70,7 +74,7 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
                         titleRtf = title,
                         contentRtf = content,
                         durationSecs = config.durationSecs,
-                        icon = iconBitmap?.toCustomIcon() ?: config.preferredIcon.objectInstance ?: Icon.Default
+                        icon = config.preferredIcon.toNotificationIcon(iconBitmapBase64)
                     )
                 ) {
                     contentType(ContentType.Application.Json)
@@ -106,8 +110,6 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
             bitmap
         } else null
     }
-
-    private fun Bitmap.toCustomIcon(): Icon.Custom = Icon.Custom(this.toBase64())
 
     private fun Bitmap.toBase64(): String {
         val buffer = ByteBuffer.allocate(byteCount)

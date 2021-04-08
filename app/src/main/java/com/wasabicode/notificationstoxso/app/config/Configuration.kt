@@ -1,8 +1,6 @@
 package com.wasabicode.notificationstoxso.app.config
 
 import android.content.Context
-import com.wasabicode.notificationstoxso.server.types.MyNotification
-import kotlin.reflect.KClass
 
 interface Configuration {
     var enabled: Boolean
@@ -10,7 +8,7 @@ interface Configuration {
     var port: Int
     var durationSecs: Float
     var exclusions: Set<String>
-    var preferredIcon: KClass<out MyNotification.Icon>
+    var preferredIcon: PreferredIcon
 }
 
 class SharedPrefsConfiguration(context: Context) : Configuration {
@@ -29,5 +27,9 @@ class SharedPrefsConfiguration(context: Context) : Configuration {
         "Charging this device via USB",
         "On sale from your wishlist",
     ))
-    override var preferredIcon: KClass<out MyNotification.Icon> = MyNotification.Icon.Custom::class
+    override var preferredIcon: PreferredIcon by SharedPrefsDelegate.int(sharedPrefs, defaultValue = PreferredIcon.Custom.ordinal)
+        .mapped(
+            get = { PreferredIcon.values()[it] },
+            set = { it.ordinal }
+        )
 }
