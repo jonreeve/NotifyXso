@@ -46,11 +46,11 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
         val content = extras.getString(Notification.EXTRA_TEXT) ?: ""
 
         if (title.isBlank() && content.isBlank()) {
-            Log.i(LOG_TAG, "Notification seen, blank title + content so not forwarding")
+            Log.v(LOG_TAG, "Notification seen, blank title + content so not forwarding")
             return
         }
         if (config.exclusions.any { title.contains(it) || content.contains(it) }) {
-            Log.i(LOG_TAG, "Notification seen, matches exclusion list so not forwarding (title: $title content: $content)")
+            Log.v(LOG_TAG, "Notification seen, matches exclusion list so not forwarding (title: $title content: $content)")
             return
         }
 
@@ -61,7 +61,7 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
         if (config.enabled) {
             val context = this
             coroutineScope.launch(coroutineExceptionHandler) {
-                Log.i(LOG_TAG, "Sending to ${config.host}:${config.port}")
+                Log.v(LOG_TAG, "Sending to ${config.host}:${config.port}")
                 val iconBitmapBase64 = when (config.preferredIcon) {
                     PreferredIcon.Custom -> statusBarNotification.notification.createIconBitmap(context)?.toBase64()
                     else -> null
