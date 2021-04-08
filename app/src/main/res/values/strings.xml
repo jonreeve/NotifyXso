@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">NotificationsToXso</string>
-    <string name="notification_listener_service_name">NotificationsToXso Service</string>
+    <string name="app_name">NotifyXso</string>
+    <string name="notification_listener_service_name">NotifyXso Service</string>
 
     <string-array name="notification_icons">
         <item>Default</item>
