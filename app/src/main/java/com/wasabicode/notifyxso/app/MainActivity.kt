@@ -1,4 +1,4 @@
-package com.wasabicode.notificationstoxso.app
+package com.wasabicode.notifyxso.app
 
 import android.os.Bundle
 import android.view.View
@@ -9,8 +9,8 @@ import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.doAfterTextChanged
-import com.wasabicode.notificationstoxso.app.config.Configuration
-import com.wasabicode.notificationstoxso.app.config.PreferredIcon
+import com.wasabicode.notifyxso.app.config.Configuration
+import com.wasabicode.notifyxso.app.config.PreferredIcon
 import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {

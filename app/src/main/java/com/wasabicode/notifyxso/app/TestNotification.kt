@@ -1,4 +1,4 @@
-package com.wasabicode.notificationstoxso.app
+package com.wasabicode.notifyxso.app
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -30,5 +30,5 @@ class TestNotification {
     }
 }
 
-private const val CHANNEL_ID = "com.wasabicode.notificationstoxso.app.default"
+private const val CHANNEL_ID = "com.wasabicode.notifyxso.app.default"
 private const val NOTIFICATION_ID = 9678

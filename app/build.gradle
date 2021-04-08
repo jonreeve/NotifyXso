@@ -9,7 +9,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.wasabicode.notificationstoxso"
+        applicationId "com.wasabicode.notifyxso"
         minSdkVersion 22
         targetSdkVersion 30
         versionCode 1

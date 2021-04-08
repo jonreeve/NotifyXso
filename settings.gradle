@@ -1,4 +1,4 @@
 include ':server-data'
 include ':server'
 include ':app'
-rootProject.name = "NotificationsToXso"
+rootProject.name = "NotifyXso"

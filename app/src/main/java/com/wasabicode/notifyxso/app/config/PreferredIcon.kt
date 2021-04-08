@@ -1,6 +1,6 @@
-package com.wasabicode.notificationstoxso.app.config
+package com.wasabicode.notifyxso.app.config
 
-import com.wasabicode.notificationstoxso.server.types.MyNotification
+import com.wasabicode.notifyxso.server.types.MyNotification
 
 enum class PreferredIcon {
     Default,

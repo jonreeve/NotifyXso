@@ -1,4 +1,4 @@
-package com.wasabicode.notificationstoxso.app.config
+package com.wasabicode.notifyxso.app.config
 
 import android.content.SharedPreferences
 import kotlin.properties.ReadWriteProperty
@@ -20,13 +20,13 @@ class SharedPrefsDelegate<T : Any?>(
 
     companion object {
         fun string(sharedPrefs: SharedPreferences, key: String? = null, defaultValue: String): SharedPrefsDelegate<String> =
-            SharedPrefsDelegate(sharedPrefs, key, defaultValue, ::getNonNullString, SharedPreferences.Editor::putString)
+            SharedPrefsDelegate(sharedPrefs, key, defaultValue, Companion::getNonNullString, SharedPreferences.Editor::putString)
 
         fun nullableString(sharedPrefs: SharedPreferences, key: String? = null, defaultValue: String? = null): SharedPrefsDelegate<String?> =
             SharedPrefsDelegate(sharedPrefs, key, defaultValue, SharedPreferences::getString, SharedPreferences.Editor::putString)
 
         fun stringSet(sharedPrefs: SharedPreferences, key: String? = null, defaultValue: Set<String> = emptySet()): SharedPrefsDelegate<Set<String>> =
-            SharedPrefsDelegate(sharedPrefs, key, defaultValue, ::getNonNullStringSet, SharedPreferences.Editor::putStringSet)
+            SharedPrefsDelegate(sharedPrefs, key, defaultValue, Companion::getNonNullStringSet, SharedPreferences.Editor::putStringSet)
 
         fun boolean(sharedPrefs: SharedPreferences, key: String? = null, defaultValue: Boolean = false): SharedPrefsDelegate<Boolean> =
             SharedPrefsDelegate(sharedPrefs, key, defaultValue, SharedPreferences::getBoolean, SharedPreferences.Editor::putBoolean)

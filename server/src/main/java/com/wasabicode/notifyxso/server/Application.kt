@@ -1,6 +1,6 @@
-package com.wasabicode.notificationstoxso.server
+package com.wasabicode.notifyxso.server
 
-import com.wasabicode.notificationstoxso.server.types.MyNotification
+import com.wasabicode.notifyxso.server.types.MyNotification
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install

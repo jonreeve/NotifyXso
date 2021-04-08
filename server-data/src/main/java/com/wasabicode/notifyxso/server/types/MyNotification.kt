@@ -1,4 +1,4 @@
-package com.wasabicode.notificationstoxso.server.types
+package com.wasabicode.notifyxso.server.types
 
 import kotlinx.serialization.Serializable
 

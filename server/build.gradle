@@ -4,7 +4,7 @@ plugins {
     id 'application'
 }
 
-group = "com.wasabicode.notificationstoxso"
+group = "com.wasabicode.notifyxso"
 version = "1.0-SNAPSHOT"
 
 compileKotlin {
@@ -26,5 +26,5 @@ dependencies {
 }
 
 application {
-    mainClassName = 'com.wasabicode.notificationstoxso.server.ApplicationKt'
+    mainClassName = 'com.wasabicode.notifyxso.server.ApplicationKt'
 }

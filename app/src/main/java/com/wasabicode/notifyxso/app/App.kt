@@ -1,9 +1,9 @@
-package com.wasabicode.notificationstoxso.app
+package com.wasabicode.notifyxso.app
 
 import android.app.Application
-import com.wasabicode.notificationstoxso.app.config.Configuration
-import com.wasabicode.notificationstoxso.app.config.SharedPrefsConfiguration
-import com.wasabicode.notificationstoxso.app.di.provideHttpClient
+import com.wasabicode.notifyxso.app.config.Configuration
+import com.wasabicode.notifyxso.app.config.SharedPrefsConfiguration
+import com.wasabicode.notifyxso.app.di.provideHttpClient
 
 class App : Application() {
     lateinit var configuration: Configuration

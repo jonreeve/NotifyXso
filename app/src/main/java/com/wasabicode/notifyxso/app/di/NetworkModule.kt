@@ -1,4 +1,4 @@
-package com.wasabicode.notificationstoxso.app.di
+package com.wasabicode.notifyxso.app.di
 
 import android.util.Log
 import io.ktor.client.HttpClient

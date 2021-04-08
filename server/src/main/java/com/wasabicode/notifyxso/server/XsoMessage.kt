@@ -1,4 +1,4 @@
-package com.wasabicode.notificationstoxso.server
+package com.wasabicode.notifyxso.server
 
 import kotlinx.serialization.Serializable
 
@@ -15,7 +15,7 @@ data class XsoMessage(
     val useBase64Icon: Boolean = false,
 //    val height: Int,
 //    val opacity: Float,
-    val sourceApp: String = "com.wasabicode.notificationstoxso"
+    val sourceApp: String = "com.wasabicode.notifyxso"
 ) {
     override fun toString(): String {
         val iconString = if (icon.length > 20) "(long text)" else "'$icon'"

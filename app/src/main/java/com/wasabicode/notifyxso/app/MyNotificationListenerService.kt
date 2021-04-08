@@ -1,4 +1,4 @@
-package com.wasabicode.notificationstoxso.app
+package com.wasabicode.notifyxso.app
 
 import android.app.Notification
 import android.content.Context
@@ -12,9 +12,9 @@ import android.service.notification.StatusBarNotification
 import android.util.Base64
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.wasabicode.notificationstoxso.app.config.Configuration
-import com.wasabicode.notificationstoxso.app.config.PreferredIcon
-import com.wasabicode.notificationstoxso.server.types.MyNotification
+import com.wasabicode.notifyxso.app.config.Configuration
+import com.wasabicode.notifyxso.app.config.PreferredIcon
+import com.wasabicode.notifyxso.server.types.MyNotification
 import io.ktor.client.HttpClient
 import io.ktor.client.request.put
 import io.ktor.http.ContentType
