@@ -1,5 +1,6 @@
 package com.wasabicode.notifyxso.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private lateinit var iconSpinner: Spinner
     private lateinit var editTextExclusions: EditText
     private lateinit var testNotificationButton: Button
+    private lateinit var permissionButton: Button
 
     private val enableOnStartArg by lazy { intent.getBooleanExtra(EXTRA_ENABLE_ON_START, false) }
     private val hostArg by lazy { intent.getStringExtra(EXTRA_HOST) }
@@ -57,6 +59,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         iconSpinner = findViewById(R.id.notification_icon_spinner)
         editTextExclusions = findViewById(R.id.edit_text_exclusions)
         testNotificationButton = findViewById(R.id.create_notification_button)
+        permissionButton = findViewById(R.id.permission_button)
     }
 
     private fun initViewValues() {
@@ -70,6 +73,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private fun initListeners() {
         testNotificationButton.setOnClickListener { TestNotification().show(this) }
+        permissionButton.setOnClickListener {
+            startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+        }
         switchEnable.setOnCheckedChangeListener { _, isChecked -> config.enabled = isChecked }
         editTextHost.doAfterTextChanged {
             config.host = it.toString()
