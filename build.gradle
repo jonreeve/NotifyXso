@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext.kotlin_version = '1.7.10'
-    ext.ktor_version = '1.6.4'
+    ext.ktor_version = '2.1.0'
     ext.logback_version = '1.2.11'
     repositories {
         google()

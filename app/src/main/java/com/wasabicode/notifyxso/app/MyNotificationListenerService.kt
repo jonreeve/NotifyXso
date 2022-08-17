@@ -17,6 +17,8 @@ import com.wasabicode.notifyxso.app.config.PreferredIcon
 import com.wasabicode.notifyxso.server.types.MyNotification
 import io.ktor.client.HttpClient
 import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.*
@@ -67,16 +69,16 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
                     else -> null
                 }
 
-                httpClient.put<Unit>(
-                    host = config.host,
-                    port = config.port,
-                    body = MyNotification(
-                        titleRtf = title,
-                        contentRtf = content,
-                        durationSecs = config.durationSecs,
-                        icon = config.preferredIcon.toNotificationIcon(iconBitmapBase64)
+                httpClient.put {
+                    url(host = config.host, port = config.port)
+                    setBody(
+                        MyNotification(
+                            titleRtf = title,
+                            contentRtf = content,
+                            durationSecs = config.durationSecs,
+                            icon = config.preferredIcon.toNotificationIcon(iconBitmapBase64)
+                        )
                     )
-                ) {
                     contentType(ContentType.Application.Json)
                 }
             }

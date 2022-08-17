@@ -1,17 +1,16 @@
 package com.wasabicode.notifyxso.server
 
 import com.wasabicode.notifyxso.server.types.MyNotification
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.application.log
-import io.ktor.features.ContentNegotiation
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.receive
-import io.ktor.response.respond
-import io.ktor.routing.put
-import io.ktor.routing.routing
-import io.ktor.serialization.json
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
+import io.ktor.server.routing.put
+import io.ktor.server.routing.routing
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -39,6 +38,7 @@ fun Application.module() {
 
     routing {
         put("/") {
+            val log = call.application.environment.log
             try {
                 val notification = call.receive<MyNotification>()
                 log.debug("Notification received: $notification")
