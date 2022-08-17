@@ -14,6 +14,7 @@ import io.ktor.routing.routing
 import io.ktor.serialization.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.DatagramPacket
@@ -22,6 +23,7 @@ import java.net.InetAddress
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
+@OptIn(ExperimentalSerializationApi::class)
 @Suppress("unused")
 fun Application.module() {
     val localHost = InetAddress.getLocalHost()
