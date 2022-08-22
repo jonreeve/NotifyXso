@@ -18,7 +18,16 @@ data class ConfigurationVO(
     override var durationSecs: Float = 2f,
     override var exclusions: Set<String> = defaultExclusions,
     override var preferredIcon: PreferredIcon = PreferredIcon.Custom
-) : Configuration
+) : Configuration {
+    constructor(other: Configuration) : this(
+        enabled = other.enabled,
+        host = other.host,
+        port = other.port,
+        durationSecs = other.durationSecs,
+        exclusions = other.exclusions,
+        preferredIcon = other.preferredIcon
+    )
+}
 
 private val defaultExclusions = setOf(
     "Pebble Time",
