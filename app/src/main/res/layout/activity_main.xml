@@ -6,13 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp">
 
-    <Button
-        android:id="@+id/permission_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Allow reading notifications"
-        app:layout_constraintTop_toBottomOf="@id/create_notification_button" />
-
     <TextView
         android:id="@+id/label_switch"
         android:layout_width="wrap_content"
@@ -159,5 +152,19 @@
         android:text="Test Notification"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layout_exclusions"/>
+
+    <Button
+        android:id="@+id/permission_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Allow reading notifications"
+        app:layout_constraintTop_toBottomOf="@id/create_notification_button" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/compose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/permission_button"
+        android:layout_marginTop="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
