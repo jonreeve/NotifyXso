@@ -19,10 +19,11 @@ import com.google.android.material.composethemeadapter.MdcTheme
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.ConfigurationVO
 import com.wasabicode.notifyxso.app.config.PreferredIcon
+import com.wasabicode.notifyxso.app.config.Server
 import java.text.DecimalFormat
 
 @Composable
-fun ConfigurationUi(config: Configuration?) {
+fun ConfigurationUi(config: Configuration?, onServerChanged: (server: Server) -> Unit = {}) {
     if (config == null) {
         MdcTheme {
             CircularProgressIndicator(Modifier.padding(64.dp))
@@ -45,7 +46,7 @@ fun ConfigurationUi(config: Configuration?) {
                     modifier = Modifier.align(CenterHorizontally)
                 )
                 SectionHeader("Server")
-                ServerConfig(config)
+                ServerConfig(config, onServerChanged)
                 SectionHeader("Appearance")
                 AppearanceConfig(config)
                 SectionHeader("Filter")
@@ -89,20 +90,20 @@ fun SectionHeader(text: String) {
 }
 
 @Composable
-private fun ServerConfig(config: Configuration) {
+private fun ServerConfig(config: Configuration, onChange: (server: Server) -> Unit) {
     Row {
         TextField(
-            value = config.host,
+            value = config.server.host,
             label = { Text("Host") },
-            onValueChange = {},
+            onValueChange = { onChange(config.server.copy(host = it)) },
             modifier = Modifier
                 .weight(3f)
                 .padding(end = 4.dp)
         )
         TextField(
-            value = config.port.toString(),
+            value = config.server.port.toString(),
             label = { Text("Port") },
-            onValueChange = {},
+            onValueChange = { onChange(config.server.copy(port = it.toIntOrNull() ?: 0)) },
             modifier = Modifier.weight(1f)
         )
     }

@@ -59,8 +59,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         if (enableOnStartArg) {
             config.enabled = true
         }
-        hostArg?.let { config.host = it }
-        portArg.takeIf { it >= 0 }?.let { config.port = it }
+        config.server = config.server.copy(
+            host = hostArg ?: config.server.host,
+            port = portArg.takeIf { it >= 0 } ?: config.server.port
+        )
     }
 
     private fun findViews() {
@@ -87,8 +89,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private fun initViewValues() {
         switchEnable.isChecked = config.enabled
-        editTextHost.setText(config.host)
-        editTextPort.setText(config.port.toString())
+        editTextHost.setText(config.server.host)
+        editTextPort.setText(config.server.port.toString())
         editTextDuration.setText(decimalFormat.format(config.durationSecs))
         iconSpinner.setSelection(config.preferredIcon.ordinal)
         editTextExclusions.setText(config.exclusions.joinToString(separator = "\n"))
@@ -101,10 +103,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
         switchEnable.setOnCheckedChangeListener { _, isChecked -> config.enabled = isChecked }
         editTextHost.doAfterTextChanged {
-            config.host = it.toString()
+            config.server = config.server.copy(host = it.toString())
         }
         editTextPort.doAfterTextChanged {
-            runCatching { Integer.parseInt(it.toString()) }.getOrNull()?.let { config.port = it }
+            runCatching { Integer.parseInt(it.toString()) }.getOrNull()?.let { config.server = config.server.copy(port = it) }
         }
         editTextDuration.doAfterTextChanged {
             runCatching { decimalFormat.parse(it.toString()) }.getOrNull()?.toFloat()?.let {
