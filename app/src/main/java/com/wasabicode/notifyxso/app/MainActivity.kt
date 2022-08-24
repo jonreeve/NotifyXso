@@ -16,6 +16,8 @@ import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
+    private lateinit var viewModel: MainViewModel
+
     private lateinit var config: Configuration
     private val decimalFormat = DecimalFormat.getNumberInstance()
 
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel = MainViewModel(application as App)
 
         config = (application as App).configuration
 
