@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.material.composethemeadapter.MdcTheme
@@ -29,37 +29,67 @@ fun ConfigurationUi(config: Configuration?) {
         }
     }
     else {
-        Column(
-            Modifier
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = "Forward\nNotifications",
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(CenterHorizontally)
-            )
-            Switch(
-                checked = config.enabled,
-                onCheckedChange = {},
-                modifier = Modifier.align(CenterHorizontally)
-            )
-            SectionHeader("Server")
-            Server(config)
-            SectionHeader("Appearance")
-            Appearance(config)
-            SectionHeader("Filter")
-
+        MdcTheme {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "Forward\nNotifications",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(CenterHorizontally)
+                )
+                Switch(
+                    checked = config.enabled,
+                    onCheckedChange = {},
+                    modifier = Modifier.align(CenterHorizontally)
+                )
+                SectionHeader("Server")
+                ServerConfig(config)
+                SectionHeader("Appearance")
+                AppearanceConfig(config)
+                SectionHeader("Filter")
+                TextField(
+                    value = config.exclusions.joinToString(separator = "\n"),
+                    label = { Text("Exclusions") },
+                    onValueChange = {},
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = "One per line, notifications containing this will be ignored",
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier
+                        .align(CenterHorizontally)
+                        .padding(bottom = 16.dp)
+                )
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.align(CenterHorizontally)
+                ) {
+                    Text("Test Notification".toUpperCase(Locale.current))
+                }
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.align(CenterHorizontally)
+                ) {
+                    Text("Allow Reading Notifications".toUpperCase(Locale.current))
+                }
+            }
         }
     }
 }
 
 @Composable
 fun SectionHeader(text: String) {
-    Text(text = text, style = MaterialTheme.typography.subtitle2, modifier = Modifier.padding(top = 4.dp))
+    Text(
+        text = text,
+        style = MaterialTheme.typography.subtitle2,
+        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+    )
 }
 
 @Composable
-private fun Server(config: Configuration) {
+private fun ServerConfig(config: Configuration) {
     Row {
         TextField(
             value = config.host,
@@ -79,7 +109,7 @@ private fun Server(config: Configuration) {
 }
 
 @Composable
-fun Appearance(config: Configuration) {
+fun AppearanceConfig(config: Configuration) {
     val decimalFormat = DecimalFormat.getNumberInstance()
     Row {
         TextField(
@@ -129,7 +159,7 @@ private fun IconDropDown(config: Configuration, onSelected: (PreferredIcon) -> U
     }
 }
 
-@Preview(name = "Loaded", widthDp = 320, heightDp = 400)
+@Preview(name = "Loaded", widthDp = 320, heightDp = 500)
 @Composable
 private fun PreviewLoaded() {
     ConfigurationUi(config = ConfigurationVO())
