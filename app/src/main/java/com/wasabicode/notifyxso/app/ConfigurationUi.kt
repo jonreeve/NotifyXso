@@ -47,13 +47,15 @@ fun ConfigurationUi(config: Configuration?) {
             Server(config)
             SectionHeader("Appearance")
             Appearance(config)
+            SectionHeader("Filter")
+
         }
     }
 }
 
 @Composable
 fun SectionHeader(text: String) {
-    Text(text = text, style = MaterialTheme.typography.subtitle2)
+    Text(text = text, style = MaterialTheme.typography.subtitle2, modifier = Modifier.padding(top = 4.dp))
 }
 
 @Composable
@@ -61,6 +63,7 @@ private fun Server(config: Configuration) {
     Row {
         TextField(
             value = config.host,
+            label = { Text("Host") },
             onValueChange = {},
             modifier = Modifier
                 .weight(3f)
@@ -68,6 +71,7 @@ private fun Server(config: Configuration) {
         )
         TextField(
             value = config.port.toString(),
+            label = { Text("Port") },
             onValueChange = {},
             modifier = Modifier.weight(1f)
         )
@@ -80,6 +84,7 @@ fun Appearance(config: Configuration) {
     Row {
         TextField(
             value = decimalFormat.format(config.durationSecs),
+            label = { Text("Duration (secs)") },
             onValueChange = {},
             modifier = Modifier
                 .weight(1f)
