@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(app: App, ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
     private val _state = MutableStateFlow<Configuration?>(null)
-    private val state: StateFlow<Configuration?> = _state
+    val state: StateFlow<Configuration?> = _state
 
     init {
         viewModelScope.launch(ioDispatcher) {

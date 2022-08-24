@@ -9,9 +9,15 @@ import android.widget.EditText
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
@@ -29,6 +35,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private lateinit var editTextExclusions: EditText
     private lateinit var testNotificationButton: Button
     private lateinit var permissionButton: Button
+    private lateinit var composeView: ComposeView
 
     private val enableOnStartArg by lazy { intent.getBooleanExtra(EXTRA_ENABLE_ON_START, false) }
     private val hostArg by lazy { intent.getStringExtra(EXTRA_HOST) }
@@ -43,6 +50,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
         processArgs()
         findViews()
+        observeViewModel()
         initViewValues()
         initListeners()
     }
@@ -64,6 +72,17 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         editTextExclusions = findViewById(R.id.edit_text_exclusions)
         testNotificationButton = findViewById(R.id.create_notification_button)
         permissionButton = findViewById(R.id.permission_button)
+        composeView = findViewById(R.id.compose)
+    }
+
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collectLatest {
+                    composeView.setContent { ConfigurationUi(it) }
+                }
+            }
+        }
     }
 
     private fun initViewValues() {
