@@ -14,8 +14,10 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.wasabicode.notifyxso.app.MainViewModel.Intention.UpdateServer
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
+import com.wasabicode.notifyxso.app.config.Server
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
@@ -81,10 +83,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collectLatest {
-                    composeView.setContent { ConfigurationUi(it) }
+                    composeView.setContent { ConfigurationUi(it, ::onServerChanged) }
                 }
             }
         }
+    }
+
+    private fun onServerChanged(server: Server) {
+        viewModel.input(UpdateServer(server))
     }
 
     private fun initViewValues() {
