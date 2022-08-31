@@ -94,7 +94,6 @@ fun ConfigurationUi(
                     ) {
                         Text("Allow Reading Notifications".toUpperCase(Locale.current))
                     }
-                    Text(text = "a\na\na\na\na\na\na\na\na\na\na")
                 }
             }
         }
