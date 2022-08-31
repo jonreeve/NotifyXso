@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.ConfigurationVO
+import com.wasabicode.notifyxso.app.config.PreferredIcon
 import com.wasabicode.notifyxso.app.config.Server
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +28,8 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
             is UpdateForwarding -> updateConfig { enabled = intention.enabled }
             is UpdateServer -> updateConfig { server = intention.server }
             is UpdateDuration -> updateConfig { durationSecs = intention.durationSecs }
+            is UpdateIcon -> updateConfig { preferredIcon = intention.preferredIcon }
+            is UpdateExclusions -> updateConfig { exclusions = intention.exclusions }
         }
     }
 
@@ -39,5 +42,7 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
         data class UpdateForwarding(val enabled: Boolean) : Intention
         data class UpdateServer(val server: Server) : Intention
         data class UpdateDuration(val durationSecs: Float) : Intention
+        data class UpdateIcon(val preferredIcon: PreferredIcon) : Intention
+        data class UpdateExclusions(val exclusions: Set<String>) : Intention
     }
 }

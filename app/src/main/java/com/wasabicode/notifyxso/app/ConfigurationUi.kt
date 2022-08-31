@@ -27,7 +27,9 @@ fun ConfigurationUi(
     config: Configuration?,
     onForwardingChanged: (Boolean) -> Unit = {},
     onServerChanged: (server: Server) -> Unit = {},
-    onDurationChanged: (durationSecs: Float) -> Unit = {}
+    onDurationChanged: (durationSecs: Float) -> Unit = {},
+    onIconChanged: (icon: PreferredIcon) -> Unit = {},
+    onExclusionsChanged: (exclusions: Set<String>) -> Unit = {},
 ) {
     if (config == null) {
         MdcTheme {
@@ -53,12 +55,12 @@ fun ConfigurationUi(
                 SectionHeader("Server")
                 ServerConfig(config, onServerChanged)
                 SectionHeader("Appearance")
-                AppearanceConfig(config, onDurationChanged)
+                AppearanceConfig(config, onDurationChanged, onIconChanged)
                 SectionHeader("Filter")
                 TextField(
                     value = config.exclusions.joinToString(separator = "\n"),
                     label = { Text("Exclusions") },
-                    onValueChange = {},
+                    onValueChange = { onExclusionsChanged(it.lines().toSet()) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Text(
@@ -115,7 +117,11 @@ private fun ServerConfig(config: Configuration, onChange: (server: Server) -> Un
 }
 
 @Composable
-fun AppearanceConfig(config: Configuration, onDurationChanged: (durationSecs: Float) -> Unit) {
+fun AppearanceConfig(
+    config: Configuration,
+    onDurationChanged: (durationSecs: Float) -> Unit,
+    onIconChanged: (icon: PreferredIcon) -> Unit
+) {
     val decimalFormat = DecimalFormat.getNumberInstance()
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -138,7 +144,7 @@ fun AppearanceConfig(config: Configuration, onDurationChanged: (durationSecs: Fl
                 modifier = Modifier.padding(horizontal = 4.dp)
             )
         }
-        IconDropDown(config, onSelected = {})
+        IconDropDown(config, onSelected = onIconChanged)
     }
 }
 

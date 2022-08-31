@@ -89,6 +89,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                             onForwardingChanged = ::onForwardingChanged,
                             onServerChanged = ::onServerChanged,
                             onDurationChanged = ::onDurationChanged,
+                            onIconChanged = ::onIconChanged,
+                            onExclusionsChanged = ::onExclusionsChanged,
                         )
                     }
                 }
@@ -106,6 +108,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private fun onDurationChanged(durationSecs: Float) {
         viewModel.input(UpdateDuration(durationSecs))
+    }
+
+    private fun onIconChanged(icon: PreferredIcon) {
+        viewModel.input(UpdateIcon(icon))
+    }
+
+    private fun onExclusionsChanged(exclusions: Set<String>) {
+        viewModel.input(UpdateExclusions(exclusions))
     }
 
     private fun initViewValues() {
