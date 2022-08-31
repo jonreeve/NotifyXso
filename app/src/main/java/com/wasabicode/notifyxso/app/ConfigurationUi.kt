@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
@@ -115,7 +116,9 @@ private fun ServerConfig(config: Configuration, onChange: (server: Server) -> Un
 @Composable
 fun AppearanceConfig(config: Configuration, onDurationChanged: (durationSecs: Float) -> Unit) {
     val decimalFormat = DecimalFormat.getNumberInstance()
-    Row {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         TextField(
             value = decimalFormat.format(config.durationSecs),
             label = { Text("Duration (secs)") },
@@ -127,7 +130,11 @@ fun AppearanceConfig(config: Configuration, onDurationChanged: (durationSecs: Fl
                 .weight(1f)
                 .padding(end = 4.dp)
         )
-        Text("Icon:")
+        Text(
+            "Icon:",
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.padding(horizontal = 4.dp)
+        )
         IconDropDown(config, onSelected = {})
     }
 }
@@ -151,7 +158,6 @@ private fun IconDropDown(config: Configuration, onSelected: (PreferredIcon) -> U
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .fillMaxWidth()
                 .background(MaterialTheme.colors.surface)
         ) {
             icons.forEach { icon ->
