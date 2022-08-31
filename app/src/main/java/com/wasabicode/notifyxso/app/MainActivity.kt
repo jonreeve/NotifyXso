@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private val enableOnStartArg by lazy { intent.getBooleanExtra(EXTRA_ENABLE_ON_START, false) }
     private val hostArg by lazy { intent.getStringExtra(EXTRA_HOST) }
-    private val portArg by lazy { intent.getIntExtra(EXTRA_PORT, -1) }
+    private val portArg by lazy { intent.getIntExtra(EXTRA_PORT, -1).takeIf { it >= 0 } }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,13 +58,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun processArgs() {
-        if (enableOnStartArg) {
-            config.enabled = true
+        if (hostArg != null || portArg != null ) {
+            viewModel.input(UpdateServer(Server(host = hostArg ?: config.server.host, port = portArg ?: config.server.port)))
         }
-        config.server = config.server.copy(
-            host = hostArg ?: config.server.host,
-            port = portArg.takeIf { it >= 0 } ?: config.server.port
-        )
+        if (enableOnStartArg) {
+            viewModel.input(UpdateForwarding(true))
+        }
     }
 
     private fun findViews() {
