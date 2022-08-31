@@ -14,6 +14,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.wasabicode.notifyxso.app.MainViewModel.Intention.UpdateDuration
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.UpdateServer
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collectLatest {
-                    composeView.setContent { ConfigurationUi(it, ::onServerChanged) }
+                    composeView.setContent { ConfigurationUi(it, ::onServerChanged, ::onDurationChanged) }
                 }
             }
         }
@@ -91,6 +92,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private fun onServerChanged(server: Server) {
         viewModel.input(UpdateServer(server))
+    }
+
+    private fun onDurationChanged(durationSecs: Float) {
+        viewModel.input(UpdateDuration(durationSecs))
     }
 
     private fun initViewValues() {

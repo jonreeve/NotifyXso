@@ -7,7 +7,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
@@ -23,7 +22,11 @@ import com.wasabicode.notifyxso.app.config.Server
 import java.text.DecimalFormat
 
 @Composable
-fun ConfigurationUi(config: Configuration?, onServerChanged: (server: Server) -> Unit = {}) {
+fun ConfigurationUi(
+    config: Configuration?,
+    onServerChanged: (server: Server) -> Unit = {},
+    onDurationChanged: (durationSecs: Float) -> Unit = {}
+) {
     if (config == null) {
         MdcTheme {
             CircularProgressIndicator(Modifier.padding(64.dp))
@@ -48,7 +51,7 @@ fun ConfigurationUi(config: Configuration?, onServerChanged: (server: Server) ->
                 SectionHeader("Server")
                 ServerConfig(config, onServerChanged)
                 SectionHeader("Appearance")
-                AppearanceConfig(config)
+                AppearanceConfig(config, onDurationChanged)
                 SectionHeader("Filter")
                 TextField(
                     value = config.exclusions.joinToString(separator = "\n"),
@@ -110,13 +113,16 @@ private fun ServerConfig(config: Configuration, onChange: (server: Server) -> Un
 }
 
 @Composable
-fun AppearanceConfig(config: Configuration) {
+fun AppearanceConfig(config: Configuration, onDurationChanged: (durationSecs: Float) -> Unit) {
     val decimalFormat = DecimalFormat.getNumberInstance()
     Row {
         TextField(
             value = decimalFormat.format(config.durationSecs),
             label = { Text("Duration (secs)") },
-            onValueChange = {},
+            onValueChange = { text ->
+                val newDuration = runCatching { decimalFormat.parse(text) }.getOrNull()?.toFloat()
+                onDurationChanged(newDuration ?: 0f)
+            },
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 4.dp)
