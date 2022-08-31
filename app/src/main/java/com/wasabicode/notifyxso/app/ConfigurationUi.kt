@@ -3,6 +3,8 @@ package com.wasabicode.notifyxso.app
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -37,55 +39,62 @@ fun ConfigurationUi(
         MdcTheme {
             CircularProgressIndicator(Modifier.padding(64.dp))
         }
-    }
-    else {
+    } else {
         MdcTheme {
-            Column(
-                Modifier
+            Box(
+                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Forward\nNotifications",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.align(CenterHorizontally)
-                )
-                Switch(
-                    checked = config.enabled,
-                    onCheckedChange = onForwardingChanged,
-                    modifier = Modifier.align(CenterHorizontally)
-                )
-                SectionHeader("Server")
-                ServerConfig(config, onServerChanged)
-                SectionHeader("Appearance")
-                AppearanceConfig(config, onDurationChanged, onIconChanged)
-                SectionHeader("Filter")
-                TextField(
-                    value = config.exclusions.joinToString(separator = "\n"),
-                    label = { Text("Exclusions") },
-                    onValueChange = { onExclusionsChanged(it.lines().toSet()) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                    .verticalScroll(rememberScrollState())
+            )
+            {
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
                     Text(
-                        text = "One per line, notifications containing this will be ignored",
-                        style = MaterialTheme.typography.caption,
-                        modifier = Modifier
-                            .align(CenterHorizontally)
-                            .padding(bottom = 16.dp)
+                        text = "Forward\nNotifications",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.align(CenterHorizontally)
                     )
-                }
-                Button(
-                    onClick = onTestNotificationButtonClicked,
-                    modifier = Modifier.align(CenterHorizontally)
-                ) {
-                    Text("Test Notification".toUpperCase(Locale.current))
-                }
-                Button(
-                    onClick = onPermissionButtonClicked,
-                    modifier = Modifier.align(CenterHorizontally)
-                ) {
-                    Text("Allow Reading Notifications".toUpperCase(Locale.current))
+                    Switch(
+                        checked = config.enabled,
+                        onCheckedChange = onForwardingChanged,
+                        modifier = Modifier.align(CenterHorizontally)
+                    )
+                    SectionHeader("Server")
+                    ServerConfig(config, onServerChanged)
+                    SectionHeader("Appearance")
+                    AppearanceConfig(config, onDurationChanged, onIconChanged)
+                    SectionHeader("Filter")
+                    TextField(
+                        value = config.exclusions.joinToString(separator = "\n"),
+                        label = { Text("Exclusions") },
+                        onValueChange = { onExclusionsChanged(it.lines().toSet()) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                        Text(
+                            text = "One per line, notifications containing this will be ignored",
+                            style = MaterialTheme.typography.caption,
+                            modifier = Modifier
+                                .align(CenterHorizontally)
+                                .padding(bottom = 16.dp)
+                        )
+                    }
+                    Button(
+                        onClick = onTestNotificationButtonClicked,
+                        modifier = Modifier.align(CenterHorizontally)
+                    ) {
+                        Text("Test Notification".toUpperCase(Locale.current))
+                    }
+                    Button(
+                        onClick = onPermissionButtonClicked,
+                        modifier = Modifier.align(CenterHorizontally)
+                    ) {
+                        Text("Allow Reading Notifications".toUpperCase(Locale.current))
+                    }
+                    Text(text = "a\na\na\na\na\na\na\na\na\na\na")
                 }
             }
         }
@@ -161,9 +170,10 @@ private fun IconDropDown(config: Configuration, onSelected: (PreferredIcon) -> U
     Box(
         modifier = Modifier.wrapContentWidth(CenterHorizontally)
     ) {
-        Row(modifier = Modifier
-            .clickable(onClick = { expanded = true })
-            .background(MaterialTheme.colors.surface)
+        Row(
+            modifier = Modifier
+                .clickable(onClick = { expanded = true })
+                .background(MaterialTheme.colors.surface)
         ) {
             Text(selected)
             Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "Change Icon")
