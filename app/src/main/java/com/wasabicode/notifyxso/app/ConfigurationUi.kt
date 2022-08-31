@@ -30,6 +30,8 @@ fun ConfigurationUi(
     onDurationChanged: (durationSecs: Float) -> Unit = {},
     onIconChanged: (icon: PreferredIcon) -> Unit = {},
     onExclusionsChanged: (exclusions: Set<String>) -> Unit = {},
+    onTestNotificationButtonClicked: () -> Unit = {},
+    onPermissionButtonClicked: () -> Unit = {}
 ) {
     if (config == null) {
         MdcTheme {
@@ -63,21 +65,23 @@ fun ConfigurationUi(
                     onValueChange = { onExclusionsChanged(it.lines().toSet()) },
                     modifier = Modifier.fillMaxWidth()
                 )
-                Text(
-                    text = "One per line, notifications containing this will be ignored",
-                    style = MaterialTheme.typography.caption,
-                    modifier = Modifier
-                        .align(CenterHorizontally)
-                        .padding(bottom = 16.dp)
-                )
+                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                    Text(
+                        text = "One per line, notifications containing this will be ignored",
+                        style = MaterialTheme.typography.caption,
+                        modifier = Modifier
+                            .align(CenterHorizontally)
+                            .padding(bottom = 16.dp)
+                    )
+                }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = onTestNotificationButtonClicked,
                     modifier = Modifier.align(CenterHorizontally)
                 ) {
                     Text("Test Notification".toUpperCase(Locale.current))
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = onPermissionButtonClicked,
                     modifier = Modifier.align(CenterHorizontally)
                 ) {
                     Text("Allow Reading Notifications".toUpperCase(Locale.current))

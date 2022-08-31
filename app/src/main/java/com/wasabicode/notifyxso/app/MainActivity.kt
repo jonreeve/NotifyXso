@@ -91,6 +91,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                             onDurationChanged = ::onDurationChanged,
                             onIconChanged = ::onIconChanged,
                             onExclusionsChanged = ::onExclusionsChanged,
+                            onTestNotificationButtonClicked = ::showTestNotification,
+                            onPermissionButtonClicked = ::launchNotificationPermissionSettings
                         )
                     }
                 }
@@ -128,9 +130,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun initListeners() {
-        testNotificationButton.setOnClickListener { TestNotification().show(this) }
+        testNotificationButton.setOnClickListener { showTestNotification() }
         permissionButton.setOnClickListener {
-            startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+            launchNotificationPermissionSettings()
         }
         switchEnable.setOnCheckedChangeListener { _, isChecked -> config.enabled = isChecked }
         editTextHost.doAfterTextChanged {
@@ -156,6 +158,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         editTextExclusions.doAfterTextChanged {
             config.exclusions = it?.split("\n")?.toSet() ?: emptySet()
         }
+    }
+
+    private fun launchNotificationPermissionSettings() {
+        startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
+    }
+
+    private fun showTestNotification() {
+        TestNotification().show(this)
     }
 
     companion object {
