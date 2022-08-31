@@ -2,8 +2,7 @@ package com.wasabicode.notifyxso.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wasabicode.notifyxso.app.MainViewModel.Intention.UpdateDuration
-import com.wasabicode.notifyxso.app.MainViewModel.Intention.UpdateServer
+import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.ConfigurationVO
 import com.wasabicode.notifyxso.app.config.Server
@@ -25,6 +24,7 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
 
     fun input(intention: Intention) = viewModelScope.launch(ioDispatcher) {
         when (intention) {
+            is UpdateForwarding -> updateConfig { enabled = intention.enabled }
             is UpdateServer -> updateConfig { server = intention.server }
             is UpdateDuration -> updateConfig { durationSecs = intention.durationSecs }
         }
@@ -36,6 +36,7 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
     }
 
     sealed interface Intention {
+        data class UpdateForwarding(val enabled: Boolean) : Intention
         data class UpdateServer(val server: Server) : Intention
         data class UpdateDuration(val durationSecs: Float) : Intention
     }

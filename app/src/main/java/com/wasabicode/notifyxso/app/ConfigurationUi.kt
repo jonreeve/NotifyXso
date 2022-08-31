@@ -25,6 +25,7 @@ import java.text.DecimalFormat
 @Composable
 fun ConfigurationUi(
     config: Configuration?,
+    onForwardingChanged: (Boolean) -> Unit = {},
     onServerChanged: (server: Server) -> Unit = {},
     onDurationChanged: (durationSecs: Float) -> Unit = {}
 ) {
@@ -46,7 +47,7 @@ fun ConfigurationUi(
                 )
                 Switch(
                     checked = config.enabled,
-                    onCheckedChange = {},
+                    onCheckedChange = onForwardingChanged,
                     modifier = Modifier.align(CenterHorizontally)
                 )
                 SectionHeader("Server")
