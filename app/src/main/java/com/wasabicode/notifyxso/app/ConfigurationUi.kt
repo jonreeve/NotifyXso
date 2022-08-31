@@ -43,6 +43,7 @@ fun ConfigurationUi(
             Column(
                 Modifier
                     .fillMaxWidth()
+                    .padding(16.dp)
             ) {
                 Text(
                     text = "Forward\nNotifications",
