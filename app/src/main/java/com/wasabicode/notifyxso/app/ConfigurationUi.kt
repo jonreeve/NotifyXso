@@ -130,11 +130,13 @@ fun AppearanceConfig(config: Configuration, onDurationChanged: (durationSecs: Fl
                 .weight(1f)
                 .padding(end = 4.dp)
         )
-        Text(
-            "Icon:",
-            style = MaterialTheme.typography.caption,
-            modifier = Modifier.padding(horizontal = 4.dp)
-        )
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+            Text(
+                "Icon:",
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
+        }
         IconDropDown(config, onSelected = {})
     }
 }
