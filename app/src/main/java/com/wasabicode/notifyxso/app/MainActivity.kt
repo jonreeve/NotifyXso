@@ -2,6 +2,8 @@ package com.wasabicode.notifyxso.app
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
@@ -14,13 +16,10 @@ import com.wasabicode.notifyxso.app.config.Server
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity(R.layout.activity_main) {
+class MainActivity : ComponentActivity() {
 
     private lateinit var viewModel: MainViewModel
-
     private lateinit var config: Configuration
-
-    private lateinit var composeView: ComposeView
 
     private val enableOnStartArg by lazy { intent.getBooleanExtra(EXTRA_ENABLE_ON_START, false) }
     private val hostArg by lazy { intent.getStringExtra(EXTRA_HOST) }
@@ -32,7 +31,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         viewModel = MainViewModel(application as App)
 
         config = (application as App).configuration
-        composeView = findViewById(R.id.compose)
 
         processArgs()
         observeViewModel()
@@ -51,7 +49,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collectLatest {
-                    composeView.setContent {
+                    setContent {
                         ConfigurationUi(
                             config = it,
                             onForwardingChanged = ::onForwardingChanged,
