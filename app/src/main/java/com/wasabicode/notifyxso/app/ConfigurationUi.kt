@@ -136,9 +136,7 @@ fun AppearanceConfig(
     onIconChanged: (icon: PreferredIcon) -> Unit
 ) {
     val decimalFormat = DecimalFormat.getNumberInstance()
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         TextField(
             value = decimalFormat.format(config.durationSecs),
             label = { Text("Duration (secs)") },
@@ -148,16 +146,21 @@ fun AppearanceConfig(
             },
             modifier = Modifier
                 .weight(1f)
-                .padding(end = 4.dp)
+                .padding(end = 8.dp)
         )
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Text(
-                "Icon:",
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(horizontal = 4.dp)
-            )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
+        ) {
+            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                Text(
+                    "Icon:",
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+            }
+            IconDropDown(config, onSelected = onIconChanged)
         }
-        IconDropDown(config, onSelected = onIconChanged)
     }
 }
 
@@ -166,42 +169,39 @@ private fun IconDropDown(config: Configuration, onSelected: (PreferredIcon) -> U
     val icons = PreferredIcon.values()
     val selected = config.preferredIcon.name
     var expanded by remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier.wrapContentWidth(CenterHorizontally)
+
+    Row(
+        modifier = Modifier
+            .clickable(onClick = { expanded = true })
+            .background(MaterialTheme.colors.surface)
     ) {
-        Row(
-            modifier = Modifier
-                .clickable(onClick = { expanded = true })
-                .background(MaterialTheme.colors.surface)
-        ) {
-            Text(selected)
-            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "Change Icon")
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .background(MaterialTheme.colors.surface)
-        ) {
-            icons.forEach { icon ->
-                DropdownMenuItem(onClick = {
-                    onSelected(icon)
-                    expanded = false
-                }) {
-                    Text(text = icon.name)
-                }
+        Text(selected)
+        Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "Change Icon")
+    }
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false },
+        modifier = Modifier
+            .background(MaterialTheme.colors.surface)
+    ) {
+        icons.forEach { icon ->
+            DropdownMenuItem(onClick = {
+                onSelected(icon)
+                expanded = false
+            }) {
+                Text(text = icon.name)
             }
         }
     }
 }
 
-@Preview(name = "Loaded", widthDp = 320, heightDp = 500)
+@Preview(name = "Loaded", widthDp = 320, heightDp = 700)
 @Composable
 private fun PreviewLoaded() {
     ConfigurationUi(config = ConfigurationVO())
 }
 
-@Preview(name = "Loading", widthDp = 320, heightDp = 400)
+@Preview(name = "Loading", widthDp = 320, heightDp = 160)
 @Composable
 private fun PreviewLoading() {
     ConfigurationUi(config = null)
