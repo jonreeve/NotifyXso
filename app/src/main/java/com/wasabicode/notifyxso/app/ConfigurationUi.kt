@@ -10,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
@@ -18,49 +17,76 @@ import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.material.composethemeadapter.MdcTheme
-import com.wasabicode.notifyxso.app.config.Configuration
-import com.wasabicode.notifyxso.app.config.ConfigurationVO
+import com.wasabicode.notifyxso.app.MainViewModel.ViewState
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import com.wasabicode.notifyxso.app.config.Server
 import java.text.DecimalFormat
 
 @Composable
 fun ConfigurationUi(
-    config: Configuration?,
+    viewState: ViewState,
     onForwardingChanged: (Boolean) -> Unit = {},
-    onServerChanged: (server: Server) -> Unit = {},
+    onServerChanged: (host: String, port: String) -> Unit = { _, _ -> },
     onDurationChanged: (durationSecs: Float) -> Unit = {},
     onIconChanged: (icon: PreferredIcon) -> Unit = {},
-    onExclusionsChanged: (exclusions: Set<String>) -> Unit = {},
+    onExclusionsChanged: (exclusions: String) -> Unit = {},
     onTestNotificationButtonClicked: () -> Unit = {},
     onPermissionButtonClicked: () -> Unit = {}
 ) {
-    if (config == null) {
-        MdcTheme {
-            CircularProgressIndicator(Modifier.padding(64.dp))
-        }
-    } else {
-        MdcTheme {
-            Box(
-                modifier = Modifier
+    when (viewState) {
+        is ViewState.Loading -> LoadingUi()
+        is ViewState.NoPermission -> LoadingUi() // TODO
+        is ViewState.Content -> ContentUi(
+            viewState,
+            onForwardingChanged,
+            onServerChanged,
+            onDurationChanged,
+            onIconChanged,
+            onExclusionsChanged,
+            onTestNotificationButtonClicked,
+            onPermissionButtonClicked,
+        )
+    }
+}
+
+@Composable
+private fun LoadingUi() {
+    MdcTheme {
+        CircularProgressIndicator(Modifier.padding(64.dp))
+    }
+}
+
+@Composable
+private fun ContentUi(
+    viewState: ViewState.Content,
+    onForwardingChanged: (Boolean) -> Unit = {},
+    onServerChanged: (host: String, port: String) -> Unit = { _, _ -> },
+    onDurationChanged: (durationSecs: Float) -> Unit = {},
+    onIconChanged: (icon: PreferredIcon) -> Unit = {},
+    onExclusionsChanged: (exclusions: String) -> Unit = {},
+    onTestNotificationButtonClicked: () -> Unit = {},
+    onPermissionButtonClicked: () -> Unit = {}
+) {
+    MdcTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+        )
+        {
+            Column(
+                Modifier
                     .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            )
-            {
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    ForwardingSwitch(config, onForwardingChanged)
-                    SectionHeader("Server")
-                    ServerConfig(config, onServerChanged)
-                    SectionHeader("Appearance")
-                    AppearanceConfig(config, onDurationChanged, onIconChanged)
-                    SectionHeader("Filter")
-                    FilterConfig(config, onExclusionsChanged)
-                    Buttons(onTestNotificationButtonClicked, onPermissionButtonClicked)
-                }
+                    .padding(16.dp)
+            ) {
+                ForwardingSwitch(viewState.enabled, onForwardingChanged)
+                SectionHeader("Server")
+                ServerConfig(viewState.host, viewState.port, onServerChanged)
+                SectionHeader("Appearance")
+                AppearanceConfig(viewState.duration, viewState.icon, onDurationChanged, onIconChanged)
+                SectionHeader("Filter")
+                FilterConfig(viewState.exclusions, onExclusionsChanged)
+                Buttons(onTestNotificationButtonClicked, onPermissionButtonClicked)
             }
         }
     }
@@ -68,7 +94,7 @@ fun ConfigurationUi(
 
 @Composable
 private fun ForwardingSwitch(
-    config: Configuration,
+    enabled: Boolean,
     onForwardingChanged: (Boolean) -> Unit
 ) {
     Text(
@@ -77,7 +103,7 @@ private fun ForwardingSwitch(
         modifier = Modifier.fillMaxWidth()
     )
     Switch(
-        checked = config.enabled,
+        checked = enabled,
         onCheckedChange = onForwardingChanged,
         modifier = Modifier.fillMaxWidth()
     )
@@ -93,20 +119,24 @@ fun SectionHeader(text: String) {
 }
 
 @Composable
-private fun ServerConfig(config: Configuration, onChange: (server: Server) -> Unit) {
+private fun ServerConfig(
+    host: String,
+    port: String,
+    onChange: (host: String, port: String) -> Unit
+) {
     Row {
         TextField(
-            value = config.server.host,
+            value = host,
             label = { Text("Host") },
-            onValueChange = { onChange(config.server.copy(host = it)) },
+            onValueChange = { onChange(it, port) },
             modifier = Modifier
                 .weight(3f)
                 .padding(end = 4.dp)
         )
         TextField(
-            value = config.server.port.toString(),
+            value = port,
             label = { Text("Port") },
-            onValueChange = { onChange(config.server.copy(port = it.toIntOrNull() ?: 0)) },
+            onValueChange = { onChange(host, it) },
             modifier = Modifier.weight(1f)
         )
     }
@@ -114,14 +144,15 @@ private fun ServerConfig(config: Configuration, onChange: (server: Server) -> Un
 
 @Composable
 fun AppearanceConfig(
-    config: Configuration,
+    duration: String,
+    icon: PreferredIcon,
     onDurationChanged: (durationSecs: Float) -> Unit,
     onIconChanged: (icon: PreferredIcon) -> Unit
 ) {
     val decimalFormat = DecimalFormat.getNumberInstance()
     Row(verticalAlignment = Alignment.CenterVertically) {
         TextField(
-            value = decimalFormat.format(config.durationSecs),
+            value = duration,
             label = { Text("Duration (secs)") },
             onValueChange = { text ->
                 val newDuration = runCatching { decimalFormat.parse(text) }.getOrNull()?.toFloat()
@@ -142,15 +173,15 @@ fun AppearanceConfig(
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
             }
-            IconDropDown(config, onSelected = onIconChanged)
+            IconDropDown(icon, onSelected = onIconChanged)
         }
     }
 }
 
 @Composable
-private fun IconDropDown(config: Configuration, onSelected: (PreferredIcon) -> Unit) {
+private fun IconDropDown(icon: PreferredIcon, onSelected: (PreferredIcon) -> Unit) {
     val icons = PreferredIcon.values()
-    val selected = config.preferredIcon.name
+    val selected = icon.name
     var expanded by remember { mutableStateOf(false) }
 
     Row(
@@ -180,14 +211,14 @@ private fun IconDropDown(config: Configuration, onSelected: (PreferredIcon) -> U
 
 @Composable
 private fun FilterConfig(
-    config: Configuration,
-    onExclusionsChanged: (exclusions: Set<String>) -> Unit,
+    exclusions: String,
+    onExclusionsChanged: (exclusions: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     TextField(
-        value = config.exclusions.joinToString(separator = "\n"),
+        value = exclusions,
         label = { Text("Exclusions") },
-        onValueChange = { onExclusionsChanged(it.lines().toSet()) },
+        onValueChange = { onExclusionsChanged(it) },
         modifier = Modifier.fillMaxWidth()
     )
     CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
@@ -221,11 +252,20 @@ private fun Buttons(onTestNotificationButtonClicked: () -> Unit, onPermissionBut
 @Preview(name = "Loaded", widthDp = 320, heightDp = 700)
 @Composable
 private fun PreviewLoaded() {
-    ConfigurationUi(config = ConfigurationVO())
+    ConfigurationUi(
+        viewState = ViewState.Content(
+            enabled = false,
+            host = "192.,168.16.8",
+            port = "43210",
+            duration = "2",
+            icon = PreferredIcon.Default,
+            exclusions = ""
+        )
+    )
 }
 
 @Preview(name = "Loading", widthDp = 320, heightDp = 160)
 @Composable
 private fun PreviewLoading() {
-    ConfigurationUi(config = null)
+    ConfigurationUi(viewState = ViewState.Loading)
 }

@@ -4,8 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -38,7 +36,12 @@ class MainActivity : ComponentActivity() {
 
     private fun processArgs() {
         if (hostArg != null || portArg != null) {
-            viewModel.input(UpdateServer(Server(host = hostArg ?: config.server.host, port = portArg ?: config.server.port)))
+            viewModel.input(
+                UpdateServer(
+                    host = hostArg ?: config.server.host,
+                    port = portArg?.toString() ?: config.server.port.toString()
+                )
+            )
         }
         if (enableOnStartArg) {
             viewModel.input(UpdateForwardingEnabled(true))
@@ -48,10 +51,10 @@ class MainActivity : ComponentActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collectLatest { state ->
+                viewModel.viewState.collectLatest { state ->
                     setContent {
                         ConfigurationUi(
-                            config = state.configuration,
+                            viewState = state,
                             onForwardingChanged = ::onForwardingChanged,
                             onServerChanged = ::onServerChanged,
                             onDurationChanged = ::onDurationChanged,
@@ -70,8 +73,8 @@ class MainActivity : ComponentActivity() {
         viewModel.input(UpdateForwardingEnabled(enabled))
     }
 
-    private fun onServerChanged(server: Server) {
-        viewModel.input(UpdateServer(server))
+    private fun onServerChanged(host: String, port: String) {
+        viewModel.input(UpdateServer(host, port))
     }
 
     private fun onDurationChanged(durationSecs: Float) {
@@ -82,7 +85,7 @@ class MainActivity : ComponentActivity() {
         viewModel.input(UpdateIcon(icon))
     }
 
-    private fun onExclusionsChanged(exclusions: Set<String>) {
+    private fun onExclusionsChanged(exclusions: String) {
         viewModel.input(UpdateExclusions(exclusions))
     }
 
