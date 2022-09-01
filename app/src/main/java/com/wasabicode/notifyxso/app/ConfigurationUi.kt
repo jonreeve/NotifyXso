@@ -52,52 +52,35 @@ fun ConfigurationUi(
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text(
-                        text = "Forward\nNotifications",
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.align(CenterHorizontally)
-                    )
-                    Switch(
-                        checked = config.enabled,
-                        onCheckedChange = onForwardingChanged,
-                        modifier = Modifier.align(CenterHorizontally)
-                    )
+                    ForwardingSwitch(config, onForwardingChanged)
                     SectionHeader("Server")
                     ServerConfig(config, onServerChanged)
                     SectionHeader("Appearance")
                     AppearanceConfig(config, onDurationChanged, onIconChanged)
                     SectionHeader("Filter")
-                    TextField(
-                        value = config.exclusions.joinToString(separator = "\n"),
-                        label = { Text("Exclusions") },
-                        onValueChange = { onExclusionsChanged(it.lines().toSet()) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                        Text(
-                            text = "One per line, notifications containing this will be ignored",
-                            style = MaterialTheme.typography.caption,
-                            modifier = Modifier
-                                .align(CenterHorizontally)
-                                .padding(bottom = 16.dp)
-                        )
-                    }
-                    Button(
-                        onClick = onTestNotificationButtonClicked,
-                        modifier = Modifier.align(CenterHorizontally)
-                    ) {
-                        Text("Test Notification".toUpperCase(Locale.current))
-                    }
-                    Button(
-                        onClick = onPermissionButtonClicked,
-                        modifier = Modifier.align(CenterHorizontally)
-                    ) {
-                        Text("Allow Reading Notifications".toUpperCase(Locale.current))
-                    }
+                    FilterConfig(config, onExclusionsChanged)
+                    Buttons(onTestNotificationButtonClicked, onPermissionButtonClicked)
                 }
             }
         }
     }
+}
+
+@Composable
+private fun ForwardingSwitch(
+    config: Configuration,
+    onForwardingChanged: (Boolean) -> Unit
+) {
+    Text(
+        text = "Forward\nNotifications",
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth()
+    )
+    Switch(
+        checked = config.enabled,
+        onCheckedChange = onForwardingChanged,
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 @Composable
@@ -192,6 +175,46 @@ private fun IconDropDown(config: Configuration, onSelected: (PreferredIcon) -> U
                 Text(text = icon.name)
             }
         }
+    }
+}
+
+@Composable
+private fun FilterConfig(
+    config: Configuration,
+    onExclusionsChanged: (exclusions: Set<String>) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        value = config.exclusions.joinToString(separator = "\n"),
+        label = { Text("Exclusions") },
+        onValueChange = { onExclusionsChanged(it.lines().toSet()) },
+        modifier = Modifier.fillMaxWidth()
+    )
+    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+        Text(
+            text = "One per line, notifications containing this will be ignored",
+            style = MaterialTheme.typography.caption,
+            textAlign = TextAlign.Center,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        )
+    }
+}
+
+@Composable
+private fun Buttons(onTestNotificationButtonClicked: () -> Unit, onPermissionButtonClicked: () -> Unit) {
+    Button(
+        onClick = onTestNotificationButtonClicked,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text("Test Notification".toUpperCase(Locale.current))
+    }
+    Button(
+        onClick = onPermissionButtonClicked,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text("Allow Reading Notifications".toUpperCase(Locale.current))
     }
 }
 
