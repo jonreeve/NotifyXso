@@ -22,6 +22,8 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
 
     init {
         viewModelScope.launch(ioDispatcher) {
+            // TODO see if we can check if we have permission and are listening for notifications with this:
+            // NotificationManagerCompat.getEnabledListenerPackages()
             _viewState.value = ViewState.Content(app.configuration, decimalFormat)
         }
     }
