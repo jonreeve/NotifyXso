@@ -65,9 +65,10 @@ dependencies {
     // lifecycleScope
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
 
-    // compose
+    // Compose
     implementation "androidx.compose.runtime:runtime:$compose_version"
     implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.activity:activity-compose:1.5.1" // integration with Activity
     implementation "androidx.compose.foundation:foundation:$compose_version"
     implementation "androidx.compose.foundation:foundation-layout:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
