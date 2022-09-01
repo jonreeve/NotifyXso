@@ -48,10 +48,10 @@ class MainActivity : ComponentActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collectLatest {
+                viewModel.state.collectLatest { state ->
                     setContent {
                         ConfigurationUi(
-                            config = it,
+                            config = state.configuration,
                             onForwardingChanged = ::onForwardingChanged,
                             onServerChanged = ::onServerChanged,
                             onDurationChanged = ::onDurationChanged,

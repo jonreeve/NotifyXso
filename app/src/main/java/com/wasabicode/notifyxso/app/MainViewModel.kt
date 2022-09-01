@@ -14,12 +14,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
-    private val _state = MutableStateFlow<Configuration?>(null)
-    val state: StateFlow<Configuration?> = _state
+    private val _state = MutableStateFlow(State())
+    val state: StateFlow<State> = _state
 
     init {
         viewModelScope.launch(ioDispatcher) {
-            _state.value = ConfigurationVO(app.configuration)
+            _state.value = State(ConfigurationVO(app.configuration))
         }
     }
 
@@ -35,8 +35,12 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
 
     private fun updateConfig(update: Configuration.() -> Unit) {
         app.configuration.update()
-        _state.value = ConfigurationVO(app.configuration)
+        _state.value = State(ConfigurationVO(app.configuration))
     }
+
+    data class State(
+        val configuration: Configuration? = null
+    )
 
     sealed interface Intention {
         data class UpdateForwardingEnabled(val enabled: Boolean) : Intention
