@@ -1,5 +1,6 @@
 package com.wasabicode.notifyxso.app
 
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
@@ -24,8 +25,8 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
 
     init {
         viewModelScope.launch(ioDispatcher) {
-            // TODO see if we can check if we have permission and are listening for notifications with this:
-            // NotificationManagerCompat.getEnabledListenerPackages()
+            // TODO check with this, prompt to enable if false
+            //val canSeeNotifications = NotificationManagerCompat.getEnabledListenerPackages(app).contains(app.packageName)
             _viewState.value = ViewState.Content(app.configuration, decimalFormat)
         }
     }
