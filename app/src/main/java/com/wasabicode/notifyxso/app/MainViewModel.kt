@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.NumberFormat
@@ -17,7 +18,7 @@ import kotlin.reflect.KClass
 
 class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
     private val _viewState = MutableStateFlow<ViewState>(ViewState.Loading)
-    val viewState: StateFlow<ViewState> = _viewState
+    val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
 
     private val decimalFormat = DecimalFormat.getNumberInstance()
 
