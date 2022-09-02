@@ -77,8 +77,8 @@ class MainActivity : ComponentActivity() {
         viewModel.input(UpdateServer(host, port))
     }
 
-    private fun onDurationChanged(durationSecs: Float) {
-        viewModel.input(UpdateDuration(durationSecs))
+    private fun onDurationChanged(duration: String) {
+        viewModel.input(UpdateDuration(duration))
     }
 
     private fun onIconChanged(icon: PreferredIcon) {

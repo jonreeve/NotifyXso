@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.NumberFormat
+import kotlin.reflect.KClass
 
 class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
     private val _viewState = MutableStateFlow<ViewState>(ViewState.Loading)
@@ -30,17 +31,38 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
 
     fun input(intention: Intention) = viewModelScope.launch(ioDispatcher) {
         when (intention) {
-            is UpdateForwardingEnabled -> updateConfig { enabled = intention.enabled }
-            is UpdateServer -> updateConfig { server = Server(intention.host, intention.port.toIntOrNull() ?: 0) }
-            is UpdateDuration -> updateConfig { durationSecs = intention.durationSecs }
-            is UpdateIcon -> updateConfig { preferredIcon = intention.preferredIcon }
-            is UpdateExclusions -> updateConfig { exclusions = intention.exclusions.lines().toSet() }
+            is UpdateForwardingEnabled -> {
+                updateConfig { enabled = intention.enabled }
+                _viewState.update(ViewState.Content::class) { copy(enabled = intention.enabled) }
+            }
+            is UpdateServer -> {
+                updateConfig { server = Server(intention.host, intention.port.toIntOrNull() ?: 0) }
+                _viewState.update(ViewState.Content::class) { copy(host = intention.host, port = intention.port) }
+            }
+            is UpdateDuration -> {
+                val newDuration = runCatching { decimalFormat.parse(intention.duration) }.getOrNull()?.toFloat()
+                newDuration?.let { updateConfig { durationSecs = it } }
+                _viewState.update(ViewState.Content::class) { copy(duration = intention.duration) }
+            }
+            is UpdateIcon -> {
+                updateConfig { preferredIcon = intention.icon }
+                _viewState.update(ViewState.Content::class) { copy(icon = intention.icon) }
+            }
+            is UpdateExclusions -> {
+                updateConfig { exclusions = intention.exclusions.lines().toSet() }
+                _viewState.update(ViewState.Content::class) { copy(exclusions = intention.exclusions) }
+            }
         }
     }
 
     private fun updateConfig(update: Configuration.() -> Unit) {
         app.configuration.update()
-        _viewState.value = ViewState.Content(app.configuration, decimalFormat)
+    }
+
+    inline fun <T : Any, reified U : T> MutableStateFlow<T>.update(type: KClass<U>, block: U.() -> T?) {
+        if (type.isInstance(value)) {
+            (value as U).run(block)?.let { value = it }
+        }
     }
 
     sealed interface ViewState {
@@ -68,8 +90,8 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
     sealed interface Intention {
         data class UpdateForwardingEnabled(val enabled: Boolean) : Intention
         data class UpdateServer(val host: String, val port: String) : Intention
-        data class UpdateDuration(val durationSecs: Float) : Intention
-        data class UpdateIcon(val preferredIcon: PreferredIcon) : Intention
+        data class UpdateDuration(val duration: String) : Intention
+        data class UpdateIcon(val icon: PreferredIcon) : Intention
         data class UpdateExclusions(val exclusions: String) : Intention
     }
 }

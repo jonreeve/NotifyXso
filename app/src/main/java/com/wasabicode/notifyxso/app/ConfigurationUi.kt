@@ -27,7 +27,7 @@ fun ConfigurationUi(
     viewState: ViewState,
     onForwardingChanged: (Boolean) -> Unit = {},
     onServerChanged: (host: String, port: String) -> Unit = { _, _ -> },
-    onDurationChanged: (durationSecs: Float) -> Unit = {},
+    onDurationChanged: (duration: String) -> Unit = {},
     onIconChanged: (icon: PreferredIcon) -> Unit = {},
     onExclusionsChanged: (exclusions: String) -> Unit = {},
     onTestNotificationButtonClicked: () -> Unit = {},
@@ -61,7 +61,7 @@ private fun ContentUi(
     viewState: ViewState.Content,
     onForwardingChanged: (Boolean) -> Unit = {},
     onServerChanged: (host: String, port: String) -> Unit = { _, _ -> },
-    onDurationChanged: (durationSecs: Float) -> Unit = {},
+    onDurationChanged: (duration: String) -> Unit = {},
     onIconChanged: (icon: PreferredIcon) -> Unit = {},
     onExclusionsChanged: (exclusions: String) -> Unit = {},
     onTestNotificationButtonClicked: () -> Unit = {},
@@ -146,18 +146,14 @@ private fun ServerConfig(
 fun AppearanceConfig(
     duration: String,
     icon: PreferredIcon,
-    onDurationChanged: (durationSecs: Float) -> Unit,
+    onDurationChanged: (duration: String) -> Unit,
     onIconChanged: (icon: PreferredIcon) -> Unit
 ) {
-    val decimalFormat = DecimalFormat.getNumberInstance()
     Row(verticalAlignment = Alignment.CenterVertically) {
         TextField(
             value = duration,
             label = { Text("Duration (secs)") },
-            onValueChange = { text ->
-                val newDuration = runCatching { decimalFormat.parse(text) }.getOrNull()?.toFloat()
-                onDurationChanged(newDuration ?: 0f)
-            },
+            onValueChange = onDurationChanged,
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 8.dp)
