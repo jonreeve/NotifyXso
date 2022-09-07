@@ -22,20 +22,21 @@ import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import java.nio.ByteBuffer
 import kotlin.math.max
 
 
 class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : NotificationListenerService() {
 
-    lateinit var config: Configuration
-    lateinit var httpClient: HttpClient
+    private lateinit var httpClient: HttpClient
+    private lateinit var configRepo: ConfigurationRepo
     private val coroutineScope: CoroutineScope = CoroutineScope(dispatchers.IO + SupervisorJob())
 
     override fun onCreate() {
         super.onCreate()
-        config = (applicationContext as App).configuration
         httpClient = (applicationContext as App).httpClient
+        configRepo = (application as App).configurationRepo
     }
 
     override fun onDestroy() {
@@ -47,39 +48,41 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
         val title = extras.getString(Notification.EXTRA_TITLE) ?: ""
         val content = extras.getString(Notification.EXTRA_TEXT) ?: ""
 
-        if (title.isBlank() && content.isBlank()) {
-            Log.v(LOG_TAG, "Notification seen, blank title + content so not forwarding")
-            return
-        }
-        if (config.exclusions.any { title.contains(it) || content.contains(it) }) {
-            Log.v(LOG_TAG, "Notification seen, matches exclusion list so not forwarding (title: $title content: $content)")
-            return
-        }
-
-        Log.i(LOG_TAG, "Notification seen, title: $title, content: $content")
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
             Log.w(LOG_TAG, "Exception!", throwable)
         }
-        if (config.enabled) {
-            val context = this
-            coroutineScope.launch(coroutineExceptionHandler) {
-                Log.v(LOG_TAG, "Sending to ${config.host}:${config.port}")
-                val iconBitmapBase64 = when (config.preferredIcon) {
-                    PreferredIcon.Custom -> statusBarNotification.notification.createIconBitmap(context)?.toBase64()
-                    else -> null
-                }
 
-                httpClient.put {
-                    url(host = config.host, port = config.port)
-                    setBody(
-                        MyNotification(
-                            titleRtf = title,
-                            contentRtf = content,
-                            durationSecs = config.durationSecs,
-                            icon = config.preferredIcon.toNotificationIcon(iconBitmapBase64)
+        val context = this
+        coroutineScope.launch(coroutineExceptionHandler) {
+            val config = configRepo.configuration.first()
+
+            if (title.isBlank() && content.isBlank()) {
+                Log.v(LOG_TAG, "Notification seen, blank title + content so not forwarding")
+            }
+            else if (config.exclusions.any { title.contains(it) || content.contains(it) }) {
+                Log.v(LOG_TAG, "Notification seen, matches exclusion list so not forwarding (title: $title content: $content)")
+            } else {
+                Log.i(LOG_TAG, "Notification seen, title: $title, content: $content")
+
+                if (config.enabled) {
+                    Log.v(LOG_TAG, "Sending to ${config.host}:${config.port}")
+                    val iconBitmapBase64 = when (config.preferredIcon) {
+                        PreferredIcon.Custom -> statusBarNotification.notification.createIconBitmap(context)?.toBase64()
+                        else -> null
+                    }
+
+                    httpClient.put {
+                        url(host = config.host, port = config.port)
+                        setBody(
+                            MyNotification(
+                                titleRtf = title,
+                                contentRtf = content,
+                                durationSecs = config.durationSecs,
+                                icon = config.preferredIcon.toNotificationIcon(iconBitmapBase64)
+                            )
                         )
-                    )
-                    contentType(ContentType.Application.Json)
+                        contentType(ContentType.Application.Json)
+                    }
                 }
             }
         }

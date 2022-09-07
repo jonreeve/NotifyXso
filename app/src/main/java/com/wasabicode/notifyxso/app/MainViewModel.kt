@@ -1,5 +1,6 @@
 package com.wasabicode.notifyxso.app
 
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
@@ -7,60 +8,39 @@ import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import kotlin.reflect.KClass
 
-class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
-    private val _viewState = MutableStateFlow<ViewState>(ViewState.Loading)
-    val viewState: StateFlow<ViewState> = _viewState.asStateFlow()
-
+class MainViewModel(
+    private val configurationRepo: ConfigurationRepo,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) : ViewModel() {
     private val decimalFormat = DecimalFormat.getNumberInstance()
 
-    init {
-        viewModelScope.launch(ioDispatcher) {
-            // TODO check with this, prompt to enable if false
-            //val canSeeNotifications = NotificationManagerCompat.getEnabledListenerPackages(app).contains(app.packageName)
-            _viewState.value = ViewState.Content(app.configuration, decimalFormat)
-        }
-    }
+    val viewState: StateFlow<ViewState> = configurationRepo.configuration
+        .map { ViewState.Content(it, decimalFormat) }
+        .stateIn(viewModelScope, WhileSubscribed(), ViewState.Loading)
 
     fun input(intention: Intention) = viewModelScope.launch(ioDispatcher) {
         when (intention) {
-            is UpdateForwardingEnabled -> {
-                updateConfig { enabled = intention.enabled }
-                _viewState.update(ViewState.Content::class) { copy(enabled = intention.enabled) }
-            }
-            is UpdateHost -> {
-                updateConfig { host = intention.host }
-                _viewState.update(ViewState.Content::class) { copy(host = intention.host) }
-            }
-            is UpdatePort -> {
-                updateConfig { port = intention.port.toIntOrNull() ?: 0 }
-                _viewState.update(ViewState.Content::class) { copy(port = intention.port) }
-            }
+            is UpdateForwardingEnabled -> updateConfig { copy(enabled = intention.enabled) }
+            is UpdateHost -> updateConfig { copy(host = intention.host) }
+            is UpdatePort -> updateConfig { copy(port = intention.port.toIntOrNull() ?: 0) }
             is UpdateDuration -> {
                 val newDuration = runCatching { decimalFormat.parse(intention.duration) }.getOrNull()?.toFloat()
-                newDuration?.let { updateConfig { durationSecs = it } }
-                _viewState.update(ViewState.Content::class) { copy(duration = intention.duration) }
+                newDuration?.let { updateConfig { copy(durationSecs = it) } }
             }
-            is UpdateIcon -> {
-                updateConfig { preferredIcon = intention.icon }
-                _viewState.update(ViewState.Content::class) { copy(icon = intention.icon) }
-            }
-            is UpdateExclusions -> {
-                updateConfig { exclusions = intention.exclusions.lines().toSet() }
-                _viewState.update(ViewState.Content::class) { copy(exclusions = intention.exclusions) }
-            }
+            is UpdateIcon -> updateConfig { copy(preferredIcon = intention.icon) }
+            is UpdateExclusions -> updateConfig { copy(exclusions = intention.exclusions.lines().toSet()) }
         }
     }
 
-    private fun updateConfig(update: Configuration.() -> Unit) {
-        app.configuration.update()
+    private fun updateConfig(update: Configuration.() -> Configuration) {
+        configurationRepo.update(update)
     }
 
     inline fun <T : Any, reified U : T> MutableStateFlow<T>.update(type: KClass<U>, block: U.() -> T?) {

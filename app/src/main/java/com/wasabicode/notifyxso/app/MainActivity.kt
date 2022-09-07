@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var config: Configuration
 
     private val enableOnStartArg by lazy { intent.getBooleanExtra(EXTRA_ENABLE_ON_START, false) }
     private val hostArg by lazy { intent.getStringExtra(EXTRA_HOST) }
@@ -25,10 +24,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = MainViewModel(application as App)
-
-        config = (application as App).configuration
-
+        viewModel = MainViewModel(SharedPrefsConfigurationRepo(application))
         processArgs()
         observeViewModel()
     }
