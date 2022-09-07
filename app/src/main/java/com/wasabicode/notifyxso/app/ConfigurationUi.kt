@@ -34,7 +34,7 @@ fun ConfigurationUi(
 ) {
     when (viewState) {
         is ViewState.Loading -> LoadingUi()
-        is ViewState.NoPermission -> LoadingUi() // TODO
+        is ViewState.NoPermission -> NoPermissionUi(onPermissionButtonClicked)
         is ViewState.Content -> ContentUi(
             viewState,
             onForwardingChanged,
@@ -52,7 +52,18 @@ fun ConfigurationUi(
 @Composable
 private fun LoadingUi() {
     MdcTheme {
-        CircularProgressIndicator(Modifier.padding(64.dp))
+        Box(modifier = Modifier.wrapContentSize()) {
+            CircularProgressIndicator(Modifier.padding(64.dp))
+        }
+    }
+}
+
+@Composable
+fun NoPermissionUi(onPermissionButtonClicked: () -> Unit) {
+    MdcTheme {
+        Box(modifier = Modifier.wrapContentSize().padding(16.dp)) {
+            PermissionButton(onPermissionButtonClicked)
+        }
     }
 }
 
@@ -239,6 +250,11 @@ private fun Buttons(onTestNotificationButtonClicked: () -> Unit, onPermissionBut
     ) {
         Text("Test Notification".toUpperCase(Locale.current))
     }
+    PermissionButton(onPermissionButtonClicked)
+}
+
+@Composable
+private fun PermissionButton(onPermissionButtonClicked: () -> Unit) {
     Button(
         onClick = onPermissionButtonClicked,
         modifier = Modifier.fillMaxWidth()
@@ -266,4 +282,10 @@ private fun PreviewLoaded() {
 @Composable
 private fun PreviewLoading() {
     ConfigurationUi(viewState = ViewState.Loading)
+}
+
+@Preview(name = "No Permission", widthDp = 320, heightDp = 160)
+@Composable
+private fun PreviewNoPermission() {
+    ConfigurationUi(viewState = ViewState.NoPermission)
 }

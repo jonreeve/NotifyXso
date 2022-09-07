@@ -8,6 +8,7 @@ import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
@@ -15,15 +16,20 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 import kotlin.reflect.KClass
 
-class MainViewModel(
-    private val configurationRepo: ConfigurationRepo,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : ViewModel() {
+@OptIn(ExperimentalCoroutinesApi::class)
+class MainViewModel(private val app: App, private val configurationRepo: ConfigurationRepo, private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
     private val decimalFormat = DecimalFormat.getNumberInstance()
 
-    val viewState: StateFlow<ViewState> = configurationRepo.configuration
-        .map { ViewState.Content(it, decimalFormat) }
-        .stateIn(viewModelScope, WhileSubscribed(), ViewState.Loading)
+    val viewState: StateFlow<ViewState> = permissionFlow().flatMapLatest { granted ->
+        if (!granted) flowOf(ViewState.NoPermission as ViewState)
+        else configurationRepo.configuration.map { ViewState.Content(it, decimalFormat) }
+    }.stateIn(viewModelScope, WhileSubscribed(), ViewState.Loading)
+
+
+    private fun permissionFlow() = flow {
+        val canSeeNotifications = NotificationManagerCompat.getEnabledListenerPackages(app).contains(app.packageName)
+        emit(canSeeNotifications)
+    }
 
     fun input(intention: Intention) = viewModelScope.launch(ioDispatcher) {
         when (intention) {

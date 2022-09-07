@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = MainViewModel(SharedPrefsConfigurationRepo(application))
+        viewModel = MainViewModel(application as App, SharedPrefsConfigurationRepo(application))
         processArgs()
         observeViewModel()
     }
