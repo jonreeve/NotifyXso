@@ -63,14 +63,14 @@ class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : No
         if (config.enabled) {
             val context = this
             coroutineScope.launch(coroutineExceptionHandler) {
-                Log.v(LOG_TAG, "Sending to ${config.server}")
+                Log.v(LOG_TAG, "Sending to ${config.host}:${config.port}")
                 val iconBitmapBase64 = when (config.preferredIcon) {
                     PreferredIcon.Custom -> statusBarNotification.notification.createIconBitmap(context)?.toBase64()
                     else -> null
                 }
 
                 httpClient.put {
-                    url(host = config.server.host, port = config.server.port)
+                    url(host = config.host, port = config.port)
                     setBody(
                         MyNotification(
                             titleRtf = title,

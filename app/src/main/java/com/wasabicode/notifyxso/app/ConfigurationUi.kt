@@ -19,14 +19,13 @@ import androidx.compose.ui.unit.dp
 import com.google.android.material.composethemeadapter.MdcTheme
 import com.wasabicode.notifyxso.app.MainViewModel.ViewState
 import com.wasabicode.notifyxso.app.config.PreferredIcon
-import com.wasabicode.notifyxso.app.config.Server
-import java.text.DecimalFormat
 
 @Composable
 fun ConfigurationUi(
     viewState: ViewState,
     onForwardingChanged: (Boolean) -> Unit = {},
-    onServerChanged: (host: String, port: String) -> Unit = { _, _ -> },
+    onHostChanged: (host: String) -> Unit = {},
+    onPortChanged: (port: String) -> Unit = {},
     onDurationChanged: (duration: String) -> Unit = {},
     onIconChanged: (icon: PreferredIcon) -> Unit = {},
     onExclusionsChanged: (exclusions: String) -> Unit = {},
@@ -39,7 +38,8 @@ fun ConfigurationUi(
         is ViewState.Content -> ContentUi(
             viewState,
             onForwardingChanged,
-            onServerChanged,
+            onHostChanged,
+            onPortChanged,
             onDurationChanged,
             onIconChanged,
             onExclusionsChanged,
@@ -60,7 +60,8 @@ private fun LoadingUi() {
 private fun ContentUi(
     viewState: ViewState.Content,
     onForwardingChanged: (Boolean) -> Unit = {},
-    onServerChanged: (host: String, port: String) -> Unit = { _, _ -> },
+    onHostChanged: (host: String) -> Unit = {},
+    onPortChanged: (port: String) -> Unit = {},
     onDurationChanged: (duration: String) -> Unit = {},
     onIconChanged: (icon: PreferredIcon) -> Unit = {},
     onExclusionsChanged: (exclusions: String) -> Unit = {},
@@ -81,7 +82,7 @@ private fun ContentUi(
             ) {
                 ForwardingSwitch(viewState.enabled, onForwardingChanged)
                 SectionHeader("Server")
-                ServerConfig(viewState.host, viewState.port, onServerChanged)
+                ServerConfig(viewState.host, viewState.port, onHostChanged, onPortChanged)
                 SectionHeader("Appearance")
                 AppearanceConfig(viewState.duration, viewState.icon, onDurationChanged, onIconChanged)
                 SectionHeader("Filter")
@@ -122,13 +123,14 @@ fun SectionHeader(text: String) {
 private fun ServerConfig(
     host: String,
     port: String,
-    onChange: (host: String, port: String) -> Unit
+    onHostChanged: (host: String) -> Unit = {},
+    onPortChanged: (port: String) -> Unit = {},
 ) {
     Row {
         TextField(
             value = host,
             label = { Text("Host") },
-            onValueChange = { onChange(it, port) },
+            onValueChange = { onHostChanged(it) },
             modifier = Modifier
                 .weight(3f)
                 .padding(end = 4.dp)
@@ -136,7 +138,7 @@ private fun ServerConfig(
         TextField(
             value = port,
             label = { Text("Port") },
-            onValueChange = { onChange(host, it) },
+            onValueChange = { onPortChanged(it) },
             modifier = Modifier.weight(1f)
         )
     }

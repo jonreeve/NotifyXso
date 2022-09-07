@@ -10,7 +10,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
-import com.wasabicode.notifyxso.app.config.Server
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -35,14 +34,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun processArgs() {
-        if (hostArg != null || portArg != null) {
-            viewModel.input(
-                UpdateServer(
-                    host = hostArg ?: config.server.host,
-                    port = portArg?.toString() ?: config.server.port.toString()
-                )
-            )
-        }
+        hostArg?.let { viewModel.input(UpdateHost(host = it)) }
+        portArg?.let { viewModel.input(UpdatePort(port = it.toString())) }
         if (enableOnStartArg) {
             viewModel.input(UpdateForwardingEnabled(true))
         }
@@ -56,7 +49,8 @@ class MainActivity : ComponentActivity() {
                         ConfigurationUi(
                             viewState = state,
                             onForwardingChanged = ::onForwardingChanged,
-                            onServerChanged = ::onServerChanged,
+                            onHostChanged = ::onHostChanged,
+                            onPortChanged = ::onPortChanged,
                             onDurationChanged = ::onDurationChanged,
                             onIconChanged = ::onIconChanged,
                             onExclusionsChanged = ::onExclusionsChanged,
@@ -73,8 +67,12 @@ class MainActivity : ComponentActivity() {
         viewModel.input(UpdateForwardingEnabled(enabled))
     }
 
-    private fun onServerChanged(host: String, port: String) {
-        viewModel.input(UpdateServer(host, port))
+    private fun onHostChanged(host: String) {
+        viewModel.input(UpdateHost(host))
+    }
+
+    private fun onPortChanged(port: String) {
+        viewModel.input(UpdatePort(port))
     }
 
     private fun onDurationChanged(duration: String) {

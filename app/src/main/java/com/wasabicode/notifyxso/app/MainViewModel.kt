@@ -1,12 +1,10 @@
 package com.wasabicode.notifyxso.app
 
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
-import com.wasabicode.notifyxso.app.config.Server
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,9 +35,13 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
                 updateConfig { enabled = intention.enabled }
                 _viewState.update(ViewState.Content::class) { copy(enabled = intention.enabled) }
             }
-            is UpdateServer -> {
-                updateConfig { server = Server(intention.host, intention.port.toIntOrNull() ?: 0) }
-                _viewState.update(ViewState.Content::class) { copy(host = intention.host, port = intention.port) }
+            is UpdateHost -> {
+                updateConfig { host = intention.host }
+                _viewState.update(ViewState.Content::class) { copy(host = intention.host) }
+            }
+            is UpdatePort -> {
+                updateConfig { port = intention.port.toIntOrNull() ?: 0 }
+                _viewState.update(ViewState.Content::class) { copy(port = intention.port) }
             }
             is UpdateDuration -> {
                 val newDuration = runCatching { decimalFormat.parse(intention.duration) }.getOrNull()?.toFloat()
@@ -80,8 +82,8 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
         ) : ViewState {
             constructor(config: Configuration, decimalFormat: NumberFormat) : this(
                 enabled = config.enabled,
-                host = config.server.host,
-                port = config.server.port.toString(),
+                host = config.host,
+                port = config.port.toString(),
                 duration = decimalFormat.format(config.durationSecs),
                 exclusions = config.exclusions.joinToString(separator = "\n"),
                 icon = config.preferredIcon
@@ -91,7 +93,8 @@ class MainViewModel(private val app: App, private val ioDispatcher: CoroutineDis
 
     sealed interface Intention {
         data class UpdateForwardingEnabled(val enabled: Boolean) : Intention
-        data class UpdateServer(val host: String, val port: String) : Intention
+        data class UpdateHost(val host: String) : Intention
+        data class UpdatePort(val port: String) : Intention
         data class UpdateDuration(val duration: String) : Intention
         data class UpdateIcon(val icon: PreferredIcon) : Intention
         data class UpdateExclusions(val exclusions: String) : Intention
