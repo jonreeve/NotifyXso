@@ -20,28 +20,46 @@ import kotlin.reflect.KClass
 class MainViewModel(private val app: App, private val configurationRepo: ConfigurationRepo, private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
     private val decimalFormat = DecimalFormat.getNumberInstance()
 
-    val viewState: StateFlow<ViewState> = permissionFlow().flatMapLatest { granted ->
-        if (!granted) flowOf(ViewState.NoPermission as ViewState)
-        else configurationRepo.configuration.map { ViewState.Content(it, decimalFormat) }
-    }.stateIn(viewModelScope, WhileSubscribed(), ViewState.Loading)
-
-
-    private fun permissionFlow() = flow {
+    private val editState = MutableStateFlow(ViewState.Content(Configuration(), decimalFormat))
+    val viewState: StateFlow<ViewState> = flow {
         val canSeeNotifications = NotificationManagerCompat.getEnabledListenerPackages(app).contains(app.packageName)
-        emit(canSeeNotifications)
-    }
+        if (canSeeNotifications) {
+            // We don't need to listen to upstream changes; we're the only editor, and we want to keep our local edits
+            val initialConfig = configurationRepo.configuration.first()
+            editState.value = ViewState.Content(initialConfig, decimalFormat)
+            emitAll(editState)
+        } else {
+            emit(ViewState.NoPermission)
+        }
+    }.stateIn(viewModelScope, WhileSubscribed(), ViewState.Loading)
 
     fun input(intention: Intention) = viewModelScope.launch(ioDispatcher) {
         when (intention) {
-            is UpdateForwardingEnabled -> updateConfig { copy(enabled = intention.enabled) }
-            is UpdateHost -> updateConfig { copy(host = intention.host) }
-            is UpdatePort -> updateConfig { copy(port = intention.port.toIntOrNull() ?: 0) }
+            is UpdateForwardingEnabled -> {
+                editState.update { it.copy(enabled = intention.enabled) }
+                updateConfig { copy(enabled = intention.enabled) }
+            }
+            is UpdateHost -> {
+                editState.update { it.copy(host = intention.host) }
+                updateConfig { copy(host = intention.host) }
+            }
+            is UpdatePort -> {
+                editState.update { it.copy(port = intention.port) }
+                updateConfig { copy(port = intention.port.toIntOrNull() ?: 0) }
+            }
             is UpdateDuration -> {
+                editState.update { it.copy(duration = intention.duration) }
                 val newDuration = runCatching { decimalFormat.parse(intention.duration) }.getOrNull()?.toFloat()
                 newDuration?.let { updateConfig { copy(durationSecs = it) } }
             }
-            is UpdateIcon -> updateConfig { copy(preferredIcon = intention.icon) }
-            is UpdateExclusions -> updateConfig { copy(exclusions = intention.exclusions.lines().toSet()) }
+            is UpdateIcon -> {
+                editState.update { it.copy(icon = intention.icon) }
+                updateConfig { copy(preferredIcon = intention.icon) }
+            }
+            is UpdateExclusions -> {
+                editState.update { it.copy(exclusions = intention.exclusions) }
+                updateConfig { copy(exclusions = intention.exclusions.lines().toSet()) }
+            }
         }
     }
 
