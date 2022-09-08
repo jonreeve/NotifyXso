@@ -16,7 +16,6 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 import kotlin.reflect.KClass
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModel(private val app: App, private val configurationRepo: ConfigurationRepo, private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
     private val decimalFormat = DecimalFormat.getNumberInstance()
 
