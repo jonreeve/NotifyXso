@@ -8,7 +8,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
-import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -43,13 +42,8 @@ class MainActivity : ComponentActivity() {
                 viewModel.viewState.collectLatest { state ->
                     setContent {
                         ConfigurationUi(
-                            viewState = state,
-                            onForwardingChanged = ::onForwardingChanged,
-                            onHostChanged = ::onHostChanged,
-                            onPortChanged = ::onPortChanged,
-                            onDurationChanged = ::onDurationChanged,
-                            onIconChanged = ::onIconChanged,
-                            onExclusionsChanged = ::onExclusionsChanged,
+                            state = state,
+                            act = viewModel::input,
                             onTestNotificationButtonClicked = ::showTestNotification,
                             onPermissionButtonClicked = ::launchNotificationPermissionSettings
                         )
@@ -57,30 +51,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    private fun onForwardingChanged(enabled: Boolean) {
-        viewModel.input(UpdateForwardingEnabled(enabled))
-    }
-
-    private fun onHostChanged(host: String) {
-        viewModel.input(UpdateHost(host))
-    }
-
-    private fun onPortChanged(port: String) {
-        viewModel.input(UpdatePort(port))
-    }
-
-    private fun onDurationChanged(duration: String) {
-        viewModel.input(UpdateDuration(duration))
-    }
-
-    private fun onIconChanged(icon: PreferredIcon) {
-        viewModel.input(UpdateIcon(icon))
-    }
-
-    private fun onExclusionsChanged(exclusions: String) {
-        viewModel.input(UpdateExclusions(exclusions))
     }
 
     private fun launchNotificationPermissionSettings() {

@@ -17,34 +17,26 @@ import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.material.composethemeadapter.MdcTheme
+import com.wasabicode.notifyxso.app.MainViewModel.Intention
+import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.MainViewModel.ViewState
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 
 @Composable
 fun ConfigurationUi(
-    viewState: ViewState,
-    onForwardingChanged: (Boolean) -> Unit = {},
-    onHostChanged: (host: String) -> Unit = {},
-    onPortChanged: (port: String) -> Unit = {},
-    onDurationChanged: (duration: String) -> Unit = {},
-    onIconChanged: (icon: PreferredIcon) -> Unit = {},
-    onExclusionsChanged: (exclusions: String) -> Unit = {},
+    state: ViewState,
+    act: (Intention) -> Unit = {},
     onTestNotificationButtonClicked: () -> Unit = {},
     onPermissionButtonClicked: () -> Unit = {}
 ) {
-    when (viewState) {
+    when (state) {
         is ViewState.Loading -> LoadingUi()
         is ViewState.NoPermission -> NoPermissionUi(onPermissionButtonClicked)
         is ViewState.Content -> ContentUi(
-            viewState,
-            onForwardingChanged,
-            onHostChanged,
-            onPortChanged,
-            onDurationChanged,
-            onIconChanged,
-            onExclusionsChanged,
+            state,
+            act,
             onTestNotificationButtonClicked,
-            onPermissionButtonClicked,
+            onPermissionButtonClicked
         )
     }
 }
@@ -61,7 +53,9 @@ private fun LoadingUi() {
 @Composable
 fun NoPermissionUi(onPermissionButtonClicked: () -> Unit) {
     MdcTheme {
-        Box(modifier = Modifier.wrapContentSize().padding(16.dp)) {
+        Box(modifier = Modifier
+            .wrapContentSize()
+            .padding(16.dp)) {
             PermissionButton(onPermissionButtonClicked)
         }
     }
@@ -70,12 +64,7 @@ fun NoPermissionUi(onPermissionButtonClicked: () -> Unit) {
 @Composable
 private fun ContentUi(
     viewState: ViewState.Content,
-    onForwardingChanged: (Boolean) -> Unit = {},
-    onHostChanged: (host: String) -> Unit = {},
-    onPortChanged: (port: String) -> Unit = {},
-    onDurationChanged: (duration: String) -> Unit = {},
-    onIconChanged: (icon: PreferredIcon) -> Unit = {},
-    onExclusionsChanged: (exclusions: String) -> Unit = {},
+    act: (Intention) -> Unit = {},
     onTestNotificationButtonClicked: () -> Unit = {},
     onPermissionButtonClicked: () -> Unit = {}
 ) {
@@ -91,13 +80,23 @@ private fun ContentUi(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                ForwardingSwitch(viewState.enabled, onForwardingChanged)
+                ForwardingSwitch(viewState.enabled) { act(UpdateForwardingEnabled(it)) }
                 SectionHeader("Server")
-                ServerConfig(viewState.host, viewState.port, onHostChanged, onPortChanged)
+                ServerConfig(
+                    host = viewState.host,
+                    port = viewState.port,
+                    onHostChanged = { act(UpdateHost(it)) },
+                    onPortChanged = { act(UpdatePort(it)) }
+                )
                 SectionHeader("Appearance")
-                AppearanceConfig(viewState.duration, viewState.icon, onDurationChanged, onIconChanged)
+                AppearanceConfig(
+                    duration = viewState.duration,
+                    icon = viewState.icon,
+                    onDurationChanged = { act(UpdateDuration(it)) },
+                    onIconChanged = { act(UpdateIcon(it)) }
+                )
                 SectionHeader("Filter")
-                FilterConfig(viewState.exclusions, onExclusionsChanged)
+                FilterConfig(viewState.exclusions) { act(UpdateExclusions(it)) }
                 Buttons(onTestNotificationButtonClicked, onPermissionButtonClicked)
             }
         }
@@ -221,8 +220,7 @@ private fun IconDropDown(icon: PreferredIcon, onSelected: (PreferredIcon) -> Uni
 @Composable
 private fun FilterConfig(
     exclusions: String,
-    onExclusionsChanged: (exclusions: String) -> Unit,
-    modifier: Modifier = Modifier
+    onExclusionsChanged: (exclusions: String) -> Unit
 ) {
     TextField(
         value = exclusions,
@@ -235,7 +233,7 @@ private fun FilterConfig(
             text = "One per line, notifications containing this will be ignored",
             style = MaterialTheme.typography.caption,
             textAlign = TextAlign.Center,
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         )
@@ -267,7 +265,7 @@ private fun PermissionButton(onPermissionButtonClicked: () -> Unit) {
 @Composable
 private fun PreviewLoaded() {
     ConfigurationUi(
-        viewState = ViewState.Content(
+        state = ViewState.Content(
             enabled = false,
             host = "192.,168.16.8",
             port = "43210",
@@ -281,11 +279,11 @@ private fun PreviewLoaded() {
 @Preview(name = "Loading", widthDp = 320, heightDp = 160)
 @Composable
 private fun PreviewLoading() {
-    ConfigurationUi(viewState = ViewState.Loading)
+    ConfigurationUi(state = ViewState.Loading)
 }
 
 @Preview(name = "No Permission", widthDp = 320, heightDp = 160)
 @Composable
 private fun PreviewNoPermission() {
-    ConfigurationUi(viewState = ViewState.NoPermission)
+    ConfigurationUi(state = ViewState.NoPermission)
 }
