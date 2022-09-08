@@ -23,19 +23,23 @@ import com.wasabicode.notifyxso.app.MainViewModel.Intention
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.MainViewModel.UiState
 import com.wasabicode.notifyxso.app.config.PreferredIcon
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun ConfigurationUi(
-    uiState: UiState,
+    uiStateFlow: Flow<UiState>,
     act: (Intention) -> Unit = {}
 ) {
-    when (uiState) {
+    val uiState = uiStateFlow.collectAsState(initial = UiState.Loading)
+    when (val currentState = uiState.value) {
         is UiState.Loading -> LoadingUi()
         is UiState.NoPermission -> NoPermissionUi()
-        is UiState.Content -> ContentUi(uiState, act)
+        is UiState.Content -> ContentUi(currentState, act)
     }
 }
 
+@Preview(name = "Loading", widthDp = 320, heightDp = 160)
 @Composable
 private fun LoadingUi() {
     MdcTheme {
@@ -45,12 +49,15 @@ private fun LoadingUi() {
     }
 }
 
+@Preview(name = "No Permission", widthDp = 320, heightDp = 160)
 @Composable
 fun NoPermissionUi() {
     MdcTheme {
-        Box(modifier = Modifier
-            .wrapContentSize()
-            .padding(16.dp)) {
+        Box(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(16.dp)
+        ) {
             PermissionButton()
         }
     }
@@ -256,10 +263,10 @@ private fun PermissionButton() {
     }
 }
 
-@Preview(name = "Loaded", widthDp = 320, heightDp = 700)
+@Preview(name = "Content", widthDp = 320, heightDp = 700)
 @Composable
-private fun PreviewLoaded() {
-    ConfigurationUi(
+private fun PreviewContent() {
+    ContentUi(
         uiState = UiState.Content(
             enabled = false,
             host = "192.,168.16.8",
@@ -269,16 +276,4 @@ private fun PreviewLoaded() {
             exclusions = ""
         )
     )
-}
-
-@Preview(name = "Loading", widthDp = 320, heightDp = 160)
-@Composable
-private fun PreviewLoading() {
-    ConfigurationUi(uiState = UiState.Loading)
-}
-
-@Preview(name = "No Permission", widthDp = 320, heightDp = 160)
-@Composable
-private fun PreviewNoPermission() {
-    ConfigurationUi(uiState = UiState.NoPermission)
 }

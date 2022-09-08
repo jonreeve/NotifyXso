@@ -23,26 +23,13 @@ class MainActivity : ComponentActivity() {
 
         viewModel = MainViewModel(application as App, SharedPrefsConfigurationRepo(application))
         processArgs()
-        observeViewModel()
+        setContent {
+            ConfigurationUi(uiStateFlow = viewModel.uiState, act = viewModel::input)
+        }
     }
 
     private fun processArgs() {
         viewModel.input(HandleStartArguments(hostArg, portArg, enableOnStartArg))
-    }
-
-    private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collectLatest { state ->
-                    setContent {
-                        ConfigurationUi(
-                            uiState = state,
-                            act = viewModel::input
-                        )
-                    }
-                }
-            }
-        }
     }
 
     companion object {
