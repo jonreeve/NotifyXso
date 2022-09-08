@@ -1,5 +1,6 @@
 package com.wasabicode.notifyxso.app
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
@@ -24,20 +26,13 @@ import com.wasabicode.notifyxso.app.config.PreferredIcon
 
 @Composable
 fun ConfigurationUi(
-    state: UiState,
-    act: (Intention) -> Unit = {},
-    onTestNotificationButtonClicked: () -> Unit = {},
-    onPermissionButtonClicked: () -> Unit = {}
+    uiState: UiState,
+    act: (Intention) -> Unit = {}
 ) {
-    when (state) {
+    when (uiState) {
         is UiState.Loading -> LoadingUi()
-        is UiState.NoPermission -> NoPermissionUi(onPermissionButtonClicked)
-        is UiState.Content -> ContentUi(
-            state,
-            act,
-            onTestNotificationButtonClicked,
-            onPermissionButtonClicked
-        )
+        is UiState.NoPermission -> NoPermissionUi()
+        is UiState.Content -> ContentUi(uiState, act)
     }
 }
 
@@ -51,12 +46,12 @@ private fun LoadingUi() {
 }
 
 @Composable
-fun NoPermissionUi(onPermissionButtonClicked: () -> Unit) {
+fun NoPermissionUi() {
     MdcTheme {
         Box(modifier = Modifier
             .wrapContentSize()
             .padding(16.dp)) {
-            PermissionButton(onPermissionButtonClicked)
+            PermissionButton()
         }
     }
 }
@@ -64,9 +59,7 @@ fun NoPermissionUi(onPermissionButtonClicked: () -> Unit) {
 @Composable
 private fun ContentUi(
     uiState: UiState.Content,
-    act: (Intention) -> Unit = {},
-    onTestNotificationButtonClicked: () -> Unit = {},
-    onPermissionButtonClicked: () -> Unit = {}
+    act: (Intention) -> Unit = {}
 ) {
     MdcTheme {
         Box(
@@ -97,7 +90,8 @@ private fun ContentUi(
                 )
                 SectionHeader("Filter")
                 FilterConfig(uiState.exclusions) { act(UpdateExclusions(it)) }
-                Buttons(onTestNotificationButtonClicked, onPermissionButtonClicked)
+                TestNotificationButton()
+                PermissionButton()
             }
         }
     }
@@ -241,20 +235,21 @@ private fun FilterConfig(
 }
 
 @Composable
-private fun Buttons(onTestNotificationButtonClicked: () -> Unit, onPermissionButtonClicked: () -> Unit) {
+private fun TestNotificationButton() {
+    val context = LocalContext.current
     Button(
-        onClick = onTestNotificationButtonClicked,
+        onClick = { TestNotification().show(context) },
         modifier = Modifier.fillMaxWidth()
     ) {
         Text("Test Notification".toUpperCase(Locale.current))
     }
-    PermissionButton(onPermissionButtonClicked)
 }
 
 @Composable
-private fun PermissionButton(onPermissionButtonClicked: () -> Unit) {
+private fun PermissionButton() {
+    val context = LocalContext.current
     Button(
-        onClick = onPermissionButtonClicked,
+        onClick = { context.startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")) },
         modifier = Modifier.fillMaxWidth()
     ) {
         Text("Allow Reading Notifications".toUpperCase(Locale.current))
@@ -265,7 +260,7 @@ private fun PermissionButton(onPermissionButtonClicked: () -> Unit) {
 @Composable
 private fun PreviewLoaded() {
     ConfigurationUi(
-        state = UiState.Content(
+        uiState = UiState.Content(
             enabled = false,
             host = "192.,168.16.8",
             port = "43210",
@@ -279,11 +274,11 @@ private fun PreviewLoaded() {
 @Preview(name = "Loading", widthDp = 320, heightDp = 160)
 @Composable
 private fun PreviewLoading() {
-    ConfigurationUi(state = UiState.Loading)
+    ConfigurationUi(uiState = UiState.Loading)
 }
 
 @Preview(name = "No Permission", widthDp = 320, heightDp = 160)
 @Composable
 private fun PreviewNoPermission() {
-    ConfigurationUi(state = UiState.NoPermission)
+    ConfigurationUi(uiState = UiState.NoPermission)
 }

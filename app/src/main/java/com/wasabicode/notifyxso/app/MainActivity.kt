@@ -1,6 +1,5 @@
 package com.wasabicode.notifyxso.app
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,7 +7,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
-import com.wasabicode.notifyxso.app.config.PreferredIcon
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -42,23 +40,13 @@ class MainActivity : ComponentActivity() {
                 viewModel.uiState.collectLatest { state ->
                     setContent {
                         ConfigurationUi(
-                            state = state,
-                            act = viewModel::input,
-                            onTestNotificationButtonClicked = ::showTestNotification,
-                            onPermissionButtonClicked = ::launchNotificationPermissionSettings
+                            uiState = state,
+                            act = viewModel::input
                         )
                     }
                 }
             }
         }
-    }
-
-    private fun launchNotificationPermissionSettings() {
-        startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"))
-    }
-
-    private fun showTestNotification() {
-        TestNotification().show(this)
     }
 
     companion object {
