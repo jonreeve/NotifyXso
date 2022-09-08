@@ -15,7 +15,11 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 import kotlin.reflect.KClass
 
-class MainViewModel(private val app: App, private val configurationRepo: ConfigurationRepo, private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
+class MainViewModel(
+    private val app: App,
+    private val configurationRepo: ConfigurationRepo,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) : ViewModel() {
     private val decimalFormat = DecimalFormat.getNumberInstance()
 
     private val editState = MutableStateFlow(UiState.Content(Configuration(), decimalFormat))
