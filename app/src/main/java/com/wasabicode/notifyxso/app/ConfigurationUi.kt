@@ -19,20 +19,20 @@ import androidx.compose.ui.unit.dp
 import com.google.android.material.composethemeadapter.MdcTheme
 import com.wasabicode.notifyxso.app.MainViewModel.Intention
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
-import com.wasabicode.notifyxso.app.MainViewModel.ViewState
+import com.wasabicode.notifyxso.app.MainViewModel.UiState
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 
 @Composable
 fun ConfigurationUi(
-    state: ViewState,
+    state: UiState,
     act: (Intention) -> Unit = {},
     onTestNotificationButtonClicked: () -> Unit = {},
     onPermissionButtonClicked: () -> Unit = {}
 ) {
     when (state) {
-        is ViewState.Loading -> LoadingUi()
-        is ViewState.NoPermission -> NoPermissionUi(onPermissionButtonClicked)
-        is ViewState.Content -> ContentUi(
+        is UiState.Loading -> LoadingUi()
+        is UiState.NoPermission -> NoPermissionUi(onPermissionButtonClicked)
+        is UiState.Content -> ContentUi(
             state,
             act,
             onTestNotificationButtonClicked,
@@ -63,7 +63,7 @@ fun NoPermissionUi(onPermissionButtonClicked: () -> Unit) {
 
 @Composable
 private fun ContentUi(
-    viewState: ViewState.Content,
+    uiState: UiState.Content,
     act: (Intention) -> Unit = {},
     onTestNotificationButtonClicked: () -> Unit = {},
     onPermissionButtonClicked: () -> Unit = {}
@@ -80,23 +80,23 @@ private fun ContentUi(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                ForwardingSwitch(viewState.enabled) { act(UpdateForwardingEnabled(it)) }
+                ForwardingSwitch(uiState.enabled) { act(UpdateForwardingEnabled(it)) }
                 SectionHeader("Server")
                 ServerConfig(
-                    host = viewState.host,
-                    port = viewState.port,
+                    host = uiState.host,
+                    port = uiState.port,
                     onHostChanged = { act(UpdateHost(it)) },
                     onPortChanged = { act(UpdatePort(it)) }
                 )
                 SectionHeader("Appearance")
                 AppearanceConfig(
-                    duration = viewState.duration,
-                    icon = viewState.icon,
+                    duration = uiState.duration,
+                    icon = uiState.icon,
                     onDurationChanged = { act(UpdateDuration(it)) },
                     onIconChanged = { act(UpdateIcon(it)) }
                 )
                 SectionHeader("Filter")
-                FilterConfig(viewState.exclusions) { act(UpdateExclusions(it)) }
+                FilterConfig(uiState.exclusions) { act(UpdateExclusions(it)) }
                 Buttons(onTestNotificationButtonClicked, onPermissionButtonClicked)
             }
         }
@@ -265,7 +265,7 @@ private fun PermissionButton(onPermissionButtonClicked: () -> Unit) {
 @Composable
 private fun PreviewLoaded() {
     ConfigurationUi(
-        state = ViewState.Content(
+        state = UiState.Content(
             enabled = false,
             host = "192.,168.16.8",
             port = "43210",
@@ -279,11 +279,11 @@ private fun PreviewLoaded() {
 @Preview(name = "Loading", widthDp = 320, heightDp = 160)
 @Composable
 private fun PreviewLoading() {
-    ConfigurationUi(state = ViewState.Loading)
+    ConfigurationUi(state = UiState.Loading)
 }
 
 @Preview(name = "No Permission", widthDp = 320, heightDp = 160)
 @Composable
 private fun PreviewNoPermission() {
-    ConfigurationUi(state = ViewState.NoPermission)
+    ConfigurationUi(state = UiState.NoPermission)
 }

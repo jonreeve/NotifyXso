@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.viewState.collectLatest { state ->
+                viewModel.uiState.collectLatest { state ->
                     setContent {
                         ConfigurationUi(
                             state = state,

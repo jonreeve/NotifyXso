@@ -8,7 +8,6 @@ import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
@@ -19,18 +18,18 @@ import kotlin.reflect.KClass
 class MainViewModel(private val app: App, private val configurationRepo: ConfigurationRepo, private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
     private val decimalFormat = DecimalFormat.getNumberInstance()
 
-    private val editState = MutableStateFlow(ViewState.Content(Configuration(), decimalFormat))
-    val viewState: StateFlow<ViewState> = flow {
+    private val editState = MutableStateFlow(UiState.Content(Configuration(), decimalFormat))
+    val uiState: StateFlow<UiState> = flow {
         val canSeeNotifications = NotificationManagerCompat.getEnabledListenerPackages(app).contains(app.packageName)
         if (canSeeNotifications) {
             // We don't need to listen to upstream changes; we're the only editor, and we want to keep our local edits
             val initialConfig = configurationRepo.configuration.first()
-            editState.value = ViewState.Content(initialConfig, decimalFormat)
+            editState.value = UiState.Content(initialConfig, decimalFormat)
             emitAll(editState)
         } else {
-            emit(ViewState.NoPermission)
+            emit(UiState.NoPermission)
         }
-    }.stateIn(viewModelScope, WhileSubscribed(), ViewState.Loading)
+    }.stateIn(viewModelScope, WhileSubscribed(), UiState.Loading)
 
     fun input(intention: Intention) = viewModelScope.launch(ioDispatcher) {
         when (intention) {
@@ -72,9 +71,9 @@ class MainViewModel(private val app: App, private val configurationRepo: Configu
         }
     }
 
-    sealed interface ViewState {
-        object NoPermission : ViewState
-        object Loading : ViewState
+    sealed interface UiState {
+        object NoPermission : UiState
+        object Loading : UiState
         data class Content(
             val enabled: Boolean,
             val host: String,
@@ -82,7 +81,7 @@ class MainViewModel(private val app: App, private val configurationRepo: Configu
             val duration: String,
             val icon: PreferredIcon,
             val exclusions: String
-        ) : ViewState {
+        ) : UiState {
             constructor(config: Configuration, decimalFormat: NumberFormat) : this(
                 enabled = config.enabled,
                 host = config.host,
