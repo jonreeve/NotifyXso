@@ -37,6 +37,22 @@ class MainViewModel(
 
     fun input(intention: Intention) = viewModelScope.launch(ioDispatcher) {
         when (intention) {
+            is HandleStartArguments -> {
+                editState.update {
+                    it.copy(
+                        enabled = intention.enable,
+                        host = intention.host ?: it.host,
+                        port = intention.port?.toString() ?: it.port
+                    )
+                }
+                updateConfig {
+                    copy(
+                        enabled = intention.enable,
+                        host = intention.host ?: host,
+                        port = intention.port ?: port
+                    )
+                }
+            }
             is UpdateForwardingEnabled -> {
                 editState.update { it.copy(enabled = intention.enabled) }
                 updateConfig { copy(enabled = intention.enabled) }
@@ -98,6 +114,7 @@ class MainViewModel(
     }
 
     sealed interface Intention {
+        data class HandleStartArguments(val host: String?, val port: Int?, val enable: Boolean) : Intention
         data class UpdateForwardingEnabled(val enabled: Boolean) : Intention
         data class UpdateHost(val host: String) : Intention
         data class UpdatePort(val port: String) : Intention

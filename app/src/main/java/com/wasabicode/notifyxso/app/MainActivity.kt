@@ -27,11 +27,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun processArgs() {
-        hostArg?.let { viewModel.input(UpdateHost(host = it)) }
-        portArg?.let { viewModel.input(UpdatePort(port = it.toString())) }
-        if (enableOnStartArg) {
-            viewModel.input(UpdateForwardingEnabled(true))
-        }
+        viewModel.input(HandleStartArguments(hostArg, portArg, enableOnStartArg))
     }
 
     private fun observeViewModel() {
