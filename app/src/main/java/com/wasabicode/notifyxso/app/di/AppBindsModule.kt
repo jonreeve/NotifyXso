@@ -1,9 +1,7 @@
 package com.wasabicode.notifyxso.app.di
 
 import android.content.Context
-import com.wasabicode.notifyxso.app.App
-import com.wasabicode.notifyxso.app.ConfigurationRepo
-import com.wasabicode.notifyxso.app.SharedPrefsConfigurationRepo
+import com.wasabicode.notifyxso.app.*
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -16,7 +14,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class AppBindsModule {
     @Singleton @Binds
-    abstract fun providesConfigurationRepo(configurationRepo: SharedPrefsConfigurationRepo): ConfigurationRepo
+    abstract fun bindsConfigurationRepo(configurationRepo: SharedPrefsConfigurationRepo): ConfigurationRepo
+
+    @Binds
+    abstract fun bindsCanSeeNotificationsUseCase(appCanSeeNotificationsUseCase: AppCanSeeNotificationsUseCase): CanSeeNotificationsUseCase
 }
 
 @Module

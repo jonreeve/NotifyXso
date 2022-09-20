@@ -19,21 +19,20 @@ import kotlin.reflect.KClass
 
 @HiltViewModel
 class MainViewModel constructor(
-    private val app: App,
+    private val canSeeNotifications: CanSeeNotificationsUseCase,
     private val configurationRepo: ConfigurationRepo,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
     @Inject constructor (
-        app: App,
+        canSeeNotifications: CanSeeNotificationsUseCase,
         configurationRepo: ConfigurationRepo,
-    ) : this(app, configurationRepo, ioDispatcher = Dispatchers.IO)
+    ) : this(canSeeNotifications, configurationRepo, ioDispatcher = Dispatchers.IO)
 
     private val decimalFormat = DecimalFormat.getNumberInstance()
 
     private val editState = MutableStateFlow(UiState.Content(Configuration(), decimalFormat))
     val uiState: StateFlow<UiState> = flow {
-        val canSeeNotifications = NotificationManagerCompat.getEnabledListenerPackages(app).contains(app.packageName)
-        if (canSeeNotifications) {
+        if (canSeeNotifications()) {
             // We don't need to listen to upstream changes; we're the only editor, and we want to keep our local edits
             val initialConfig = configurationRepo.configuration.first()
             editState.value = UiState.Content(initialConfig, decimalFormat)
