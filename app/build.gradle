@@ -10,6 +10,11 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version"
     id 'kotlin-android'
+    // kapt is on the way out (in favour of KSP) as it's slow, but dagger/hilt still needs it for now
+    // See https://github.com/google/dagger/issues/2349
+    // Could possibly use napt or something but this project's so small, this will do for now.
+    id 'org.jetbrains.kotlin.kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -46,6 +51,10 @@ android {
     }
 }
 
+kapt {
+    correctErrorTypes true
+}
+
 dependencies {
     implementation project(":server-data")
 
@@ -66,6 +75,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     // collectAsStateWithLifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version"
+
+    // hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     // Compose
     implementation "androidx.compose.runtime:runtime:$compose_version"
