@@ -18,6 +18,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.material.composethemeadapter.MdcTheme
 import com.wasabicode.notifyxso.app.MainViewModel.Intention
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
@@ -26,12 +28,13 @@ import com.wasabicode.notifyxso.app.config.PreferredIcon
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun ConfigurationUi(
     uiStateFlow: Flow<UiState>,
     act: (Intention) -> Unit = {}
 ) {
-    val uiState = uiStateFlow.collectAsState(initial = UiState.Loading)
+    val uiState = uiStateFlow.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     when (val currentState = uiState.value) {
         is UiState.Loading -> LoadingUi()
         is UiState.NoPermission -> NoPermissionUi()
