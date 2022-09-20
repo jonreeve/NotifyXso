@@ -5,9 +5,12 @@ import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.Configuration.Companion.Defaults
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import com.wasabicode.notifyxso.app.config.SharedPrefsDelegate
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 interface ConfigurationRepo {
     val configuration: Flow<Configuration>
@@ -15,7 +18,7 @@ interface ConfigurationRepo {
     fun update(update: Configuration.() -> Configuration)
 }
 
-class SharedPrefsConfigurationRepo(context: Context) : ConfigurationRepo {
+class SharedPrefsConfigurationRepo @Inject constructor(@ApplicationContext context: Context) : ConfigurationRepo {
     private val sharedPrefs = context.getSharedPreferences("config", Context.MODE_PRIVATE)
     private var enabled by SharedPrefsDelegate.boolean(sharedPrefs)
     private var host by SharedPrefsDelegate.string(sharedPrefs, defaultValue = Defaults.host)

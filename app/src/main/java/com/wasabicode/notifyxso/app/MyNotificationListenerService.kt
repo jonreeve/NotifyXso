@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import com.wasabicode.notifyxso.server.types.MyNotification
+import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.client.HttpClient
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -24,20 +25,16 @@ import io.ktor.http.contentType
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import java.nio.ByteBuffer
+import javax.inject.Inject
 import kotlin.math.max
 
-
+@AndroidEntryPoint
 class MyNotificationListenerService(dispatchers: Dispatchers = Dispatchers) : NotificationListenerService() {
 
-    private lateinit var httpClient: HttpClient
-    private lateinit var configRepo: ConfigurationRepo
-    private val coroutineScope: CoroutineScope = CoroutineScope(dispatchers.IO + SupervisorJob())
+    @Inject lateinit var httpClient: HttpClient
+    @Inject lateinit var configRepo: ConfigurationRepo
 
-    override fun onCreate() {
-        super.onCreate()
-        httpClient = (applicationContext as App).httpClient
-        configRepo = (application as App).configurationRepo
-    }
+    private val coroutineScope: CoroutineScope = CoroutineScope(dispatchers.IO + SupervisorJob())
 
     override fun onDestroy() {
         coroutineScope.cancel()
