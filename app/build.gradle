@@ -54,6 +54,9 @@ android {
 kapt {
     correctErrorTypes true
 }
+hilt {
+    enableAggregatingTask = true
+}
 
 dependencies {
     implementation project(":server-data")
