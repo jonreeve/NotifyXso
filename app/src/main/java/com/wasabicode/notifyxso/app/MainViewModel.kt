@@ -21,12 +21,17 @@ import kotlin.reflect.KClass
 class MainViewModel constructor(
     private val canSeeNotifications: CanSeeNotificationsUseCase,
     private val configurationRepo: ConfigurationRepo,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     @Inject constructor (
         canSeeNotifications: CanSeeNotificationsUseCase,
         configurationRepo: ConfigurationRepo,
-    ) : this(canSeeNotifications, configurationRepo, ioDispatcher = Dispatchers.IO)
+        appDispatchers: AppDispatchers
+    ) : this(
+        canSeeNotifications = canSeeNotifications,
+        configurationRepo = configurationRepo,
+        ioDispatcher = appDispatchers.IO
+    )
 
     private val decimalFormat = DecimalFormat.getNumberInstance()
 

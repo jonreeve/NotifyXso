@@ -18,6 +18,9 @@ abstract class AppBindsModule {
 
     @Binds
     abstract fun bindsCanSeeNotificationsUseCase(appCanSeeNotificationsUseCase: AppCanSeeNotificationsUseCase): CanSeeNotificationsUseCase
+
+    @Binds
+    abstract fun bindsAppDispatchers(defaultAppDispatchers: DefaultAppDispatchers): AppDispatchers
 }
 
 @Module
