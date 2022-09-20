@@ -3,11 +3,14 @@ package com.wasabicode.notifyxso.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModels()
 
     private val enableOnStartArg by lazy { intent.getBooleanExtra(EXTRA_ENABLE_ON_START, false) }
     private val hostArg by lazy { intent.getStringExtra(EXTRA_HOST) }
@@ -16,7 +19,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = MainViewModel(application as App, SharedPrefsConfigurationRepo(application))
         processArgs()
         setContent {
             ConfigurationUi(uiStateFlow = viewModel.uiState, act = viewModel::act)

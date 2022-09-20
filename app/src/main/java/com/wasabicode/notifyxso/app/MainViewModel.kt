@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -13,13 +14,20 @@ import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.NumberFormat
+import javax.inject.Inject
 import kotlin.reflect.KClass
 
-class MainViewModel(
+@HiltViewModel
+class MainViewModel constructor(
     private val app: App,
     private val configurationRepo: ConfigurationRepo,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
+    @Inject constructor (
+        app: App,
+        configurationRepo: ConfigurationRepo,
+    ) : this(app, configurationRepo, ioDispatcher = Dispatchers.IO)
+
     private val decimalFormat = DecimalFormat.getNumberInstance()
 
     private val editState = MutableStateFlow(UiState.Content(Configuration(), decimalFormat))
