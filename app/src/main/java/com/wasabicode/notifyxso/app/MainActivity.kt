@@ -3,12 +3,7 @@ package com.wasabicode.notifyxso.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -24,12 +19,12 @@ class MainActivity : ComponentActivity() {
         viewModel = MainViewModel(application as App, SharedPrefsConfigurationRepo(application))
         processArgs()
         setContent {
-            ConfigurationUi(uiStateFlow = viewModel.uiState, act = viewModel::input)
+            ConfigurationUi(uiStateFlow = viewModel.uiState, act = viewModel::act)
         }
     }
 
     private fun processArgs() {
-        viewModel.input(HandleStartArguments(hostArg, portArg, enableOnStartArg))
+        viewModel.act(HandleStartArguments(hostArg, portArg, enableOnStartArg))
     }
 
     companion object {

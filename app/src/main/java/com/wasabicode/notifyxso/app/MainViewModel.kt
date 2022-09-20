@@ -35,7 +35,7 @@ class MainViewModel(
         }
     }.stateIn(viewModelScope, WhileSubscribed(), UiState.Loading)
 
-    fun input(intention: Intention) = viewModelScope.launch(ioDispatcher) {
+    fun act(intention: Intention) = viewModelScope.launch(ioDispatcher) {
         when (intention) {
             is HandleStartArguments -> {
                 editState.update {
