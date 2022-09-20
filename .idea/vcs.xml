@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="CommitMessageInspectionProfile">
+    <profile version="1.0">
+      <inspection_tool class="BodyLimit" enabled="$IS_LOCAL_BUILD$" level="WARNING" enabled_by_default="$IS_LOCAL_BUILD$" />
+      <inspection_tool class="SubjectBodySeparation" enabled="$IS_LOCAL_BUILD$" level="WARNING" enabled_by_default="$IS_LOCAL_BUILD$" />
+      <inspection_tool class="SubjectLimit" enabled="$IS_LOCAL_BUILD$" level="WARNING" enabled_by_default="$IS_LOCAL_BUILD$">
+        <option name="RIGHT_MARGIN" value="50" />
+      </inspection_tool>
+    </profile>
+  </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
   </component>

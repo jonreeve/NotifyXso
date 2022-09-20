@@ -1,5 +1,6 @@
 package com.wasabicode.notifyxso.app.config
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -15,6 +16,7 @@ class SharedPrefsDelegate<T : Any?>(
     override fun getValue(thisRef: Any, property: KProperty<*>): T =
         sharedPrefs.get(key ?: property.name, defaultValue)
 
+    @SuppressLint("CommitPrefEdits") // it does tho (it's just that relies on the set function returning the same Editor)
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T) =
         sharedPrefs.edit().set(key ?: property.name, value).apply()
 
