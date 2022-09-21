@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
-import javax.inject.Singleton
 
 interface ConfigurationRepo {
     val configuration: Flow<Configuration>

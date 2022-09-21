@@ -1,11 +1,4 @@
 <resources>
     <string name="app_name">NotifyXso</string>
     <string name="notification_listener_service_name">NotifyXso Service</string>
-
-    <string-array name="notification_icons">
-        <item>Default</item>
-        <item>Warning</item>
-        <item>Error</item>
-        <item>Custom</item>
-    </string-array>
 </resources>

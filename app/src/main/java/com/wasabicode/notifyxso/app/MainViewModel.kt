@@ -1,6 +1,5 @@
 package com.wasabicode.notifyxso.app
 
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
@@ -8,7 +7,6 @@ import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch

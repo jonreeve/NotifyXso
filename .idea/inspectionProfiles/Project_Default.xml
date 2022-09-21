@@ -1,0 +1,37 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PreviewAnnotationInFunctionWithParameters" enabled="$IS_LOCAL_BUILD$" level="ERROR" enabled_by_default="$IS_LOCAL_BUILD$">
+      <option name="composableFile" value="$IS_LOCAL_BUILD$" />
+      <option name="previewFile" value="$IS_LOCAL_BUILD$" />
+    </inspection_tool>
+    <inspection_tool class="PreviewDimensionRespectsLimit" enabled="$IS_LOCAL_BUILD$" level="WARNING" enabled_by_default="$IS_LOCAL_BUILD$">
+      <option name="composableFile" value="$IS_LOCAL_BUILD$" />
+      <option name="previewFile" value="$IS_LOCAL_BUILD$" />
+    </inspection_tool>
+    <inspection_tool class="PreviewFontScaleMustBeGreaterThanZero" enabled="$IS_LOCAL_BUILD$" level="ERROR" enabled_by_default="$IS_LOCAL_BUILD$">
+      <option name="composableFile" value="$IS_LOCAL_BUILD$" />
+      <option name="previewFile" value="$IS_LOCAL_BUILD$" />
+    </inspection_tool>
+    <inspection_tool class="PreviewMultipleParameterProviders" enabled="$IS_LOCAL_BUILD$" level="ERROR" enabled_by_default="$IS_LOCAL_BUILD$">
+      <option name="composableFile" value="$IS_LOCAL_BUILD$" />
+      <option name="previewFile" value="$IS_LOCAL_BUILD$" />
+    </inspection_tool>
+    <inspection_tool class="PreviewMustBeTopLevelFunction" enabled="$IS_LOCAL_BUILD$" level="ERROR" enabled_by_default="$IS_LOCAL_BUILD$">
+      <option name="composableFile" value="$IS_LOCAL_BUILD$" />
+      <option name="previewFile" value="$IS_LOCAL_BUILD$" />
+    </inspection_tool>
+    <inspection_tool class="PreviewNeedsComposableAnnotation" enabled="$IS_LOCAL_BUILD$" level="ERROR" enabled_by_default="$IS_LOCAL_BUILD$">
+      <option name="composableFile" value="$IS_LOCAL_BUILD$" />
+      <option name="previewFile" value="$IS_LOCAL_BUILD$" />
+    </inspection_tool>
+    <inspection_tool class="PreviewNotSupportedInUnitTestFiles" enabled="$IS_LOCAL_BUILD$" level="ERROR" enabled_by_default="$IS_LOCAL_BUILD$">
+      <option name="composableFile" value="$IS_LOCAL_BUILD$" />
+      <option name="previewFile" value="$IS_LOCAL_BUILD$" />
+    </inspection_tool>
+    <inspection_tool class="PreviewPickerAnnotation" enabled="$IS_LOCAL_BUILD$" level="ERROR" enabled_by_default="$IS_LOCAL_BUILD$">
+      <option name="composableFile" value="$IS_LOCAL_BUILD$" />
+      <option name="previewFile" value="$IS_LOCAL_BUILD$" />
+    </inspection_tool>
+  </profile>
+</component>

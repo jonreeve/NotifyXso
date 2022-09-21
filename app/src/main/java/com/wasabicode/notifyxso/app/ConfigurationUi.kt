@@ -26,7 +26,6 @@ import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.MainViewModel.UiState
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable

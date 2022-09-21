@@ -12,7 +12,6 @@ import android.service.notification.StatusBarNotification
 import android.util.Base64
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import com.wasabicode.notifyxso.server.types.MyNotification
 import dagger.hilt.android.AndroidEntryPoint
