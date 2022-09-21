@@ -1,6 +1,7 @@
 package com.wasabicode.notifyxso.app
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,11 +13,13 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,7 +29,6 @@ import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.MainViewModel.UiState
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
@@ -58,13 +60,28 @@ fun NoPermissionUi() {
     MdcTheme {
         Box(
             modifier = Modifier
+                .debugLayout("init")
                 .wrapContentSize()
+                .debugLayout("post-wrap")
                 .padding(16.dp)
+                .debugLayout("post-pad")
         ) {
             PermissionButton()
         }
     }
 }
+
+fun Modifier.debugLayout(description: String, logTag: String = "Modifier Layout") = layout { measurable, constraints ->
+    measurable.measure(constraints).let { placeable ->
+        Log.d(logTag, "${description.padEnd(15)} ${constraints.debugPrint()} -> Size: ${placeable.width}x${placeable.height}")
+        layout(placeable.width, placeable.height) {
+            placeable.place(0, 0)
+        }
+    }
+}
+
+private fun Constraints.debugPrint() =
+    "Constraints([$minWidth-${maxWidth.let { if (it == Constraints.Infinity) "∞" else it}}]x[$minHeight-${maxHeight.let { if (it == Constraints.Infinity) "∞" else it}}])"
 
 @Composable
 private fun ContentUi(
