@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
@@ -83,21 +84,21 @@ private fun ContentUi(
                     .padding(16.dp)
             ) {
                 ForwardingSwitch(uiState.enabled) { act(UpdateForwardingEnabled(it)) }
-                SectionHeader("Server")
+                SectionHeader(stringResource(R.string.config_section_title_server))
                 ServerConfig(
                     host = uiState.host,
                     port = uiState.port,
                     onHostChanged = { act(UpdateHost(it)) },
                     onPortChanged = { act(UpdatePort(it)) }
                 )
-                SectionHeader("Appearance")
+                SectionHeader(stringResource(R.string.config_section_title_appearance))
                 AppearanceConfig(
                     duration = uiState.duration,
                     icon = uiState.icon,
                     onDurationChanged = { act(UpdateDuration(it)) },
                     onIconChanged = { act(UpdateIcon(it)) }
                 )
-                SectionHeader("Filter")
+                SectionHeader(stringResource(R.string.config_section_title_filter))
                 FilterConfig(uiState.exclusions) { act(UpdateExclusions(it)) }
                 TestNotificationButton()
                 PermissionButton()
@@ -112,7 +113,7 @@ private fun ForwardingSwitch(
     onForwardingChanged: (Boolean) -> Unit
 ) {
     Text(
-        text = "Forward\nNotifications",
+        text = stringResource(R.string.main_enabled_switch),
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth()
     )
@@ -142,7 +143,7 @@ private fun ServerConfig(
     Row {
         TextField(
             value = host,
-            label = { Text("Host") },
+            label = { Text(stringResource(R.string.config_label_host)) },
             onValueChange = { onHostChanged(it) },
             modifier = Modifier
                 .weight(3f)
@@ -150,7 +151,7 @@ private fun ServerConfig(
         )
         TextField(
             value = port,
-            label = { Text("Port") },
+            label = { Text(stringResource(R.string.config_label_port)) },
             onValueChange = { onPortChanged(it) },
             modifier = Modifier.weight(1f)
         )
@@ -167,7 +168,7 @@ fun AppearanceConfig(
     Row(verticalAlignment = Alignment.CenterVertically) {
         TextField(
             value = duration,
-            label = { Text("Duration (secs)") },
+            label = { Text(stringResource(R.string.config_label_duration)) },
             onValueChange = onDurationChanged,
             modifier = Modifier
                 .weight(1f)
@@ -179,7 +180,7 @@ fun AppearanceConfig(
         ) {
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 Text(
-                    "Icon:",
+                    stringResource(R.string.config_label_icon),
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
@@ -201,7 +202,10 @@ private fun IconDropDown(icon: PreferredIcon, onSelected: (PreferredIcon) -> Uni
             .background(MaterialTheme.colors.surface)
     ) {
         Text(selected)
-        Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "Change Icon")
+        Icon(
+            imageVector = Icons.Default.ArrowDropDown,
+            contentDescription = stringResource(R.string.config_content_description_icon_dropdown)
+        )
     }
     DropdownMenu(
         expanded = expanded,
@@ -227,13 +231,13 @@ private fun FilterConfig(
 ) {
     TextField(
         value = exclusions,
-        label = { Text("Exclusions") },
+        label = { Text(stringResource(R.string.config_label_exclusions)) },
         onValueChange = { onExclusionsChanged(it) },
         modifier = Modifier.fillMaxWidth()
     )
     CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
         Text(
-            text = "One per line, notifications containing this will be ignored",
+            text = stringResource(R.string.config_label_exclusions_hint),
             style = MaterialTheme.typography.caption,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -250,7 +254,7 @@ private fun TestNotificationButton() {
         onClick = { TestNotification().show(context) },
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text("Test Notification".toUpperCase(Locale.current))
+        Text(stringResource(R.string.button_test_notification).toUpperCase(Locale.current))
     }
 }
 
@@ -261,7 +265,7 @@ private fun PermissionButton() {
         onClick = { context.startActivity(Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")) },
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text("Allow Reading Notifications".toUpperCase(Locale.current))
+        Text(stringResource(R.string.button_allow_reading_notifications).toUpperCase(Locale.current))
     }
 }
 

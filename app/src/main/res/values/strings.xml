@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">NotifyXso</string>
     <string name="notification_listener_service_name">NotifyXso Service</string>
+    <string name="main_enabled_switch">Forward
+Notifications</string>
+    <string name="config_section_title_server">Server</string>
+    <string name="config_section_title_appearance">Appearance</string>
+    <string name="config_section_title_filter">Filter</string>
+    <string name="config_label_host">Host</string>
+    <string name="config_label_port">Port</string>
+    <string name="config_label_duration">Duration (secs)</string>
+    <string name="config_label_icon">Icon:</string>
+    <string name="config_content_description_icon_dropdown">Change Icon</string>
+    <string name="config_label_exclusions">Exclusions</string>
+    <string name="config_label_exclusions_hint">One per line, notifications containing this will be ignored</string>
+    <string name="button_test_notification">Test Notification</string>
+    <string name="button_allow_reading_notifications">Allow Reading Notifications</string>
 </resources>
