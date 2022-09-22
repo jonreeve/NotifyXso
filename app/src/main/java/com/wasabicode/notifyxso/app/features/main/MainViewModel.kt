@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import javax.inject.Inject
-import kotlin.reflect.KClass
 
 @HiltViewModel
 class MainViewModel constructor(
@@ -96,12 +95,6 @@ class MainViewModel constructor(
 
     private fun updateConfig(update: Configuration.() -> Configuration) {
         configurationRepo.update(update)
-    }
-
-    inline fun <T : Any, reified U : T> MutableStateFlow<T>.update(type: KClass<U>, block: U.() -> T?) {
-        if (type.isInstance(value)) {
-            (value as U).run(block)?.let { value = it }
-        }
     }
 
     sealed interface UiState {
