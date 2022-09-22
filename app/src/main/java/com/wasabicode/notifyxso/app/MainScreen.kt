@@ -48,7 +48,7 @@ fun MainScreen(
 
 @Composable
 private fun LoadingUi() {
-    Box(modifier = Modifier.wrapContentSize()) {
+    Box(modifier = Modifier.fillMaxSize().wrapContentSize()) {
         CircularProgressIndicator(Modifier.padding(64.dp))
     }
 }
