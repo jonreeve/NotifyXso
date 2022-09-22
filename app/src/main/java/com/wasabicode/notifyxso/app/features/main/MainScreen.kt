@@ -22,10 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.wasabicode.notifyxso.app.MainViewModel.Intention
-import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
-import com.wasabicode.notifyxso.app.MainViewModel.UiState
 import com.wasabicode.notifyxso.app.config.PreferredIcon
+import com.wasabicode.notifyxso.app.features.main.MainViewModel
+import com.wasabicode.notifyxso.app.features.main.MainViewModel.Intention
+import com.wasabicode.notifyxso.app.features.main.MainViewModel.Intention.*
+import com.wasabicode.notifyxso.app.features.main.MainViewModel.UiState
+import com.wasabicode.notifyxso.app.features.main.TestNotification
 import com.wasabicode.notifyxso.app.ui.AppTheme
 import kotlinx.coroutines.flow.Flow
 

@@ -1,10 +1,13 @@
-package com.wasabicode.notifyxso.app
+package com.wasabicode.notifyxso.app.features.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
+import com.wasabicode.notifyxso.app.AppDispatchers
+import com.wasabicode.notifyxso.app.CanSeeNotificationsUseCase
+import com.wasabicode.notifyxso.app.ConfigurationRepo
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
+import com.wasabicode.notifyxso.app.features.main.MainViewModel.Intention.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*

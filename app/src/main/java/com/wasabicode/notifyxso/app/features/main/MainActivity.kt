@@ -1,4 +1,4 @@
-package com.wasabicode.notifyxso.app
+package com.wasabicode.notifyxso.app.features.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.wasabicode.notifyxso.app.MainScreen
 import com.wasabicode.notifyxso.app.ui.AppTheme
 import com.wasabicode.notifyxso.app.ui.NavDestinations.Home
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,5 +46,6 @@ fun AppNavHost(
         composable(Home.route) {
             MainScreen(viewModel = hiltViewModel())
         }
+
     }
 }

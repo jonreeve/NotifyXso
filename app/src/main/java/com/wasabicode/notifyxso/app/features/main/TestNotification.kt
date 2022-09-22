@@ -1,4 +1,4 @@
-package com.wasabicode.notifyxso.app
+package com.wasabicode.notifyxso.app.features.main
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.wasabicode.notifyxso.app.R
 
 class TestNotification {
     fun show(context: Context) {
