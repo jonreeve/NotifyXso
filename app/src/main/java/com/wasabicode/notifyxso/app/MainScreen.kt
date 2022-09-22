@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.material.composethemeadapter.MdcTheme
 import com.wasabicode.notifyxso.app.MainViewModel.Intention
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
@@ -28,11 +29,14 @@ import com.wasabicode.notifyxso.app.MainViewModel.UiState
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import kotlinx.coroutines.flow.Flow
 
+@Composable
+fun MainScreen(viewModel: MainViewModel = viewModel()) = MainScreen(uiStateFlow = viewModel.uiState, act = viewModel::act)
+
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
-fun ConfigurationUi(
+fun MainScreen(
     uiStateFlow: Flow<UiState>,
-    act: (Intention) -> Unit = {}
+    act: (Intention) -> Unit = {},
 ) {
     val uiState = uiStateFlow.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     when (val currentState = uiState.value) {

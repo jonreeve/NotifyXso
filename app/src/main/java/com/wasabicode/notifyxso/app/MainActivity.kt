@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
 
         processArgs()
         setContent {
-            ConfigurationUi(uiStateFlow = viewModel.uiState, act = viewModel::act)
+            MainScreen(viewModel = viewModel)
         }
     }
 
