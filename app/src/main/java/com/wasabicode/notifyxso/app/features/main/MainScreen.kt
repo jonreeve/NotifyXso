@@ -28,7 +28,7 @@ import com.wasabicode.notifyxso.app.features.main.MainViewModel.Intention
 import com.wasabicode.notifyxso.app.features.main.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.features.main.MainViewModel.UiState
 import com.wasabicode.notifyxso.app.features.main.TestNotification
-import com.wasabicode.notifyxso.app.ui.AppTheme
+import com.wasabicode.notifyxso.app.shared.ui.AppTheme
 import kotlinx.coroutines.flow.Flow
 
 @Composable

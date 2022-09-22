@@ -14,7 +14,7 @@
         android:name="com.wasabicode.notifyxso.app.App"
         tools:ignore="AllowBackup">
 
-        <service android:name="com.wasabicode.notifyxso.app.MyNotificationListenerService"
+        <service android:name="com.wasabicode.notifyxso.app.features.service.MyNotificationListenerService"
             android:label="@string/notification_listener_service_name"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
             android:exported="true">
@@ -23,7 +23,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name="com.wasabicode.notifyxso.app.MainActivity"
+        <activity android:name="com.wasabicode.notifyxso.app.features.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

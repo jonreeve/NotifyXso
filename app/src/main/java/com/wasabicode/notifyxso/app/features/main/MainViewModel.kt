@@ -2,9 +2,8 @@ package com.wasabicode.notifyxso.app.features.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wasabicode.notifyxso.app.AppDispatchers
-import com.wasabicode.notifyxso.app.CanSeeNotificationsUseCase
-import com.wasabicode.notifyxso.app.ConfigurationRepo
+import com.wasabicode.notifyxso.app.shared.coroutines.AppDispatchers
+import com.wasabicode.notifyxso.app.shared.ConfigurationRepo
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import com.wasabicode.notifyxso.app.features.main.MainViewModel.Intention.*

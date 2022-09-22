@@ -1,4 +1,4 @@
-package com.wasabicode.notifyxso.app.ui
+package com.wasabicode.notifyxso.app.shared.ui
 
 import androidx.compose.runtime.Composable
 import com.google.android.material.composethemeadapter.MdcTheme

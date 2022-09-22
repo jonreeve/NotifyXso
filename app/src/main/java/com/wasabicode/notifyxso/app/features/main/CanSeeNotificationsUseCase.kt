@@ -1,4 +1,4 @@
-package com.wasabicode.notifyxso.app
+package com.wasabicode.notifyxso.app.features.main
 
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat

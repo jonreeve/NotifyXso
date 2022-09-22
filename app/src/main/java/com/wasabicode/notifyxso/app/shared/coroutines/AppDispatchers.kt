@@ -1,4 +1,4 @@
-package com.wasabicode.notifyxso.app
+package com.wasabicode.notifyxso.app.shared.coroutines
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

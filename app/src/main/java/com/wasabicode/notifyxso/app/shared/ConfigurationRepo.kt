@@ -1,4 +1,4 @@
-package com.wasabicode.notifyxso.app
+package com.wasabicode.notifyxso.app.shared
 
 import android.content.Context
 import com.wasabicode.notifyxso.app.config.Configuration
