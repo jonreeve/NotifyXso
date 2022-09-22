@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.wasabicode.notifyxso.app.ui.AppTheme
+import com.wasabicode.notifyxso.app.ui.NavDestinations.Home
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -38,10 +39,10 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = "home",
+        startDestination = Home.route,
         modifier = modifier
     ) {
-        composable("home") {
+        composable(Home.route) {
             MainScreen(viewModel = hiltViewModel())
         }
     }
