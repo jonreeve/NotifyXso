@@ -10,7 +10,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.wasabicode.notifyxso.app.features.filter.FilterScreen
+import com.wasabicode.notifyxso.app.features.main.MainScreen
 import com.wasabicode.notifyxso.app.shared.ui.AppTheme
+import com.wasabicode.notifyxso.app.shared.ui.NavDestinations.Filter
 import com.wasabicode.notifyxso.app.shared.ui.NavDestinations.Home
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,8 +46,10 @@ fun AppNavHost(
         modifier = modifier
     ) {
         composable(Home.route) {
-            MainScreen(viewModel = hiltViewModel())
+            MainScreen(viewModel = hiltViewModel(), navController = navController)
         }
-
+        composable(Filter.route) {
+            FilterScreen(viewModel = hiltViewModel())
+        }
     }
 }

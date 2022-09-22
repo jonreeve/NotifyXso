@@ -1,4 +1,4 @@
-package com.wasabicode.notifyxso.app
+package com.wasabicode.notifyxso.app.features.main
 
 import android.content.Intent
 import androidx.compose.foundation.background
@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,36 +23,37 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.wasabicode.notifyxso.app.R
 import com.wasabicode.notifyxso.app.config.PreferredIcon
-import com.wasabicode.notifyxso.app.features.main.MainViewModel
 import com.wasabicode.notifyxso.app.features.main.MainViewModel.Intention
 import com.wasabicode.notifyxso.app.features.main.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.features.main.MainViewModel.UiState
-import com.wasabicode.notifyxso.app.features.main.TestNotification
 import com.wasabicode.notifyxso.app.shared.ui.AppTheme
+import com.wasabicode.notifyxso.app.shared.ui.LoadingUi
+import com.wasabicode.notifyxso.app.shared.ui.NavDestinations
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = viewModel()) = MainScreen(uiStateFlow = viewModel.uiState, act = viewModel::act)
+fun MainScreen(viewModel: MainViewModel = viewModel(), navController: NavController) =
+    MainScreen(uiStateFlow = viewModel.uiState, act = viewModel::act, navController = navController)
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun MainScreen(
     uiStateFlow: Flow<UiState>,
     act: (Intention) -> Unit = {},
+    navController: NavController
 ) {
     val uiState = uiStateFlow.collectAsStateWithLifecycle(initialValue = UiState.Loading)
     when (val currentState = uiState.value) {
         is UiState.Loading -> LoadingUi()
         is UiState.NoPermission -> NoPermissionUi()
-        is UiState.Content -> ContentUi(currentState, act)
-    }
-}
-
-@Composable
-private fun LoadingUi() {
-    Box(modifier = Modifier.fillMaxSize().wrapContentSize()) {
-        CircularProgressIndicator(Modifier.padding(64.dp))
+        is UiState.Content -> ContentUi(
+            uiState = currentState,
+            act = act,
+            goToFilters = { navController.navigate(NavDestinations.Filter.route) }
+        )
     }
 }
 
@@ -69,7 +71,8 @@ fun NoPermissionUi() {
 @Composable
 private fun ContentUi(
     uiState: UiState.Content,
-    act: (Intention) -> Unit = {}
+    act: (Intention) -> Unit = {},
+    goToFilters: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -98,7 +101,7 @@ private fun ContentUi(
                 onIconChanged = { act(UpdateIcon(it)) }
             )
             SectionHeader(stringResource(R.string.config_section_title_filter))
-            FilterConfig(uiState.exclusions) { act(UpdateExclusions(it)) }
+            FilterConfig(uiState.exclusions, goToFilters)
             TestNotificationButton()
             PermissionButton()
         }
@@ -224,24 +227,17 @@ private fun IconDropDown(icon: PreferredIcon, onSelected: (PreferredIcon) -> Uni
 
 @Composable
 private fun FilterConfig(
-    exclusions: String,
-    onExclusionsChanged: (exclusions: String) -> Unit
+    exclusions: Int,
+    onEdit: () -> Unit
 ) {
-    TextField(
-        value = exclusions,
-        label = { Text(stringResource(R.string.config_label_exclusions)) },
-        onValueChange = { onExclusionsChanged(it) },
-        modifier = Modifier.fillMaxWidth()
-    )
-    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-        Text(
-            text = stringResource(R.string.config_label_exclusions_hint),
-            style = MaterialTheme.typography.caption,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
+    Row {
+        Text(text = stringResource(R.string.config_label_n_exclusions, exclusions), modifier = Modifier.weight(1f))
+        Button(
+            onClick = onEdit,
+            modifier = Modifier.padding(start = 4.dp)
+        ) {
+            Icon(imageVector = Icons.Default.Edit, contentDescription = stringResource(R.string.config_label_exclusions_edit))
+        }
     }
 }
 
@@ -278,17 +274,9 @@ private fun PreviewContent() {
                 port = "43210",
                 duration = "2",
                 icon = PreferredIcon.Default,
-                exclusions = ""
+                exclusions = 3
             )
         )
-    }
-}
-
-@Preview(name = "Loading", widthDp = 320, heightDp = 160)
-@Composable
-private fun PreviewLoading() {
-    AppTheme {
-        LoadingUi()
     }
 }
 

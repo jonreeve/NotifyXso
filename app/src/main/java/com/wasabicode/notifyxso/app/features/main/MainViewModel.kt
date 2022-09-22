@@ -2,11 +2,11 @@ package com.wasabicode.notifyxso.app.features.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wasabicode.notifyxso.app.shared.coroutines.AppDispatchers
-import com.wasabicode.notifyxso.app.shared.ConfigurationRepo
 import com.wasabicode.notifyxso.app.config.Configuration
 import com.wasabicode.notifyxso.app.config.PreferredIcon
 import com.wasabicode.notifyxso.app.features.main.MainViewModel.Intention.*
+import com.wasabicode.notifyxso.app.shared.ConfigurationRepo
+import com.wasabicode.notifyxso.app.shared.coroutines.AppDispatchers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
@@ -37,7 +37,7 @@ class MainViewModel constructor(
     private val editState = MutableStateFlow(UiState.Content(Configuration(), decimalFormat))
     val uiState: StateFlow<UiState> = flow {
         if (canSeeNotifications()) {
-            // We don't need to listen to upstream changes; we're the only editor, and we want to keep our local edits
+            // We don't need to listen to upstream changes while we're open, just our edits. Nothing else can change it while we're here
             val initialConfig = configurationRepo.configuration.first()
             editState.value = UiState.Content(initialConfig, decimalFormat)
             emitAll(editState)
@@ -85,10 +85,6 @@ class MainViewModel constructor(
                 editState.update { it.copy(icon = intention.icon) }
                 updateConfig { copy(preferredIcon = intention.icon) }
             }
-            is UpdateExclusions -> {
-                editState.update { it.copy(exclusions = intention.exclusions) }
-                updateConfig { copy(exclusions = intention.exclusions.lines().toSet()) }
-            }
         }
     }
 
@@ -105,14 +101,14 @@ class MainViewModel constructor(
             val port: String,
             val duration: String,
             val icon: PreferredIcon,
-            val exclusions: String
+            val exclusions: Int
         ) : UiState {
             constructor(config: Configuration, decimalFormat: NumberFormat) : this(
                 enabled = config.enabled,
                 host = config.host,
                 port = config.port.toString(),
                 duration = decimalFormat.format(config.durationSecs),
-                exclusions = config.exclusions.joinToString(separator = "\n"),
+                exclusions = config.exclusions.size,
                 icon = config.preferredIcon
             )
         }
@@ -125,6 +121,5 @@ class MainViewModel constructor(
         data class UpdatePort(val port: String) : Intention
         data class UpdateDuration(val duration: String) : Intention
         data class UpdateIcon(val icon: PreferredIcon) : Intention
-        data class UpdateExclusions(val exclusions: String) : Intention
     }
 }

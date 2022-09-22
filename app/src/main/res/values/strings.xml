@@ -12,7 +12,9 @@ Notifications</string>
     <string name="config_label_icon">Icon:</string>
     <string name="config_content_description_icon_dropdown">Change Icon</string>
     <string name="config_label_exclusions">Exclusions</string>
+    <string name="config_label_n_exclusions">%d exclusions</string>
     <string name="config_label_exclusions_hint">One per line, notifications containing this will be ignored</string>
     <string name="button_test_notification">Test Notification</string>
     <string name="button_allow_reading_notifications">Allow Reading Notifications</string>
+    <string name="config_label_exclusions_edit">Edit</string>
 </resources>

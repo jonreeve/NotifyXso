@@ -1,5 +1,6 @@
 package com.wasabicode.notifyxso.app.shared.ui
 
 enum class NavDestinations(val route: String) {
-    Home("home")
+    Home("home"),
+    Filter("filter")
 }

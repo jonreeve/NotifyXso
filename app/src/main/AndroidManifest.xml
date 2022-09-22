@@ -23,7 +23,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name="com.wasabicode.notifyxso.app.features.main.MainActivity"
+        <activity android:name="com.wasabicode.notifyxso.app.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
