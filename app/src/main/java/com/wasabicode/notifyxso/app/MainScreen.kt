@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.material.composethemeadapter.MdcTheme
 import com.wasabicode.notifyxso.app.MainViewModel.Intention
 import com.wasabicode.notifyxso.app.MainViewModel.Intention.*
 import com.wasabicode.notifyxso.app.MainViewModel.UiState
 import com.wasabicode.notifyxso.app.config.PreferredIcon
+import com.wasabicode.notifyxso.app.ui.AppTheme
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -46,27 +46,21 @@ fun MainScreen(
     }
 }
 
-@Preview(name = "Loading", widthDp = 320, heightDp = 160)
 @Composable
 private fun LoadingUi() {
-    MdcTheme {
-        Box(modifier = Modifier.wrapContentSize()) {
-            CircularProgressIndicator(Modifier.padding(64.dp))
-        }
+    Box(modifier = Modifier.wrapContentSize()) {
+        CircularProgressIndicator(Modifier.padding(64.dp))
     }
 }
 
-@Preview(name = "No Permission", widthDp = 320, heightDp = 160)
 @Composable
 fun NoPermissionUi() {
-    MdcTheme {
-        Box(
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(16.dp)
-        ) {
-            PermissionButton()
-        }
+    Box(
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(16.dp)
+    ) {
+        PermissionButton()
     }
 }
 
@@ -75,38 +69,36 @@ private fun ContentUi(
     uiState: UiState.Content,
     act: (Intention) -> Unit = {}
 ) {
-    MdcTheme {
-        Box(
-            modifier = Modifier
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+    )
+    {
+        Column(
+            Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-        )
-        {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                ForwardingSwitch(uiState.enabled) { act(UpdateForwardingEnabled(it)) }
-                SectionHeader(stringResource(R.string.config_section_title_server))
-                ServerConfig(
-                    host = uiState.host,
-                    port = uiState.port,
-                    onHostChanged = { act(UpdateHost(it)) },
-                    onPortChanged = { act(UpdatePort(it)) }
-                )
-                SectionHeader(stringResource(R.string.config_section_title_appearance))
-                AppearanceConfig(
-                    duration = uiState.duration,
-                    icon = uiState.icon,
-                    onDurationChanged = { act(UpdateDuration(it)) },
-                    onIconChanged = { act(UpdateIcon(it)) }
-                )
-                SectionHeader(stringResource(R.string.config_section_title_filter))
-                FilterConfig(uiState.exclusions) { act(UpdateExclusions(it)) }
-                TestNotificationButton()
-                PermissionButton()
-            }
+                .padding(16.dp)
+        ) {
+            ForwardingSwitch(uiState.enabled) { act(UpdateForwardingEnabled(it)) }
+            SectionHeader(stringResource(R.string.config_section_title_server))
+            ServerConfig(
+                host = uiState.host,
+                port = uiState.port,
+                onHostChanged = { act(UpdateHost(it)) },
+                onPortChanged = { act(UpdatePort(it)) }
+            )
+            SectionHeader(stringResource(R.string.config_section_title_appearance))
+            AppearanceConfig(
+                duration = uiState.duration,
+                icon = uiState.icon,
+                onDurationChanged = { act(UpdateDuration(it)) },
+                onIconChanged = { act(UpdateIcon(it)) }
+            )
+            SectionHeader(stringResource(R.string.config_section_title_filter))
+            FilterConfig(uiState.exclusions) { act(UpdateExclusions(it)) }
+            TestNotificationButton()
+            PermissionButton()
         }
     }
 }
@@ -276,14 +268,32 @@ private fun PermissionButton() {
 @Preview(name = "Content", widthDp = 320, heightDp = 700)
 @Composable
 private fun PreviewContent() {
-    ContentUi(
-        uiState = UiState.Content(
-            enabled = false,
-            host = "192.,168.16.8",
-            port = "43210",
-            duration = "2",
-            icon = PreferredIcon.Default,
-            exclusions = ""
+    AppTheme {
+        ContentUi(
+            uiState = UiState.Content(
+                enabled = false,
+                host = "192.168.16.8",
+                port = "43210",
+                duration = "2",
+                icon = PreferredIcon.Default,
+                exclusions = ""
+            )
         )
-    )
+    }
+}
+
+@Preview(name = "Loading", widthDp = 320, heightDp = 160)
+@Composable
+private fun PreviewLoading() {
+    AppTheme {
+        LoadingUi()
+    }
+}
+
+@Preview(name = "No Permission", widthDp = 320, heightDp = 160)
+@Composable
+private fun PreviewNoPermissionUi() {
+    AppTheme {
+        NoPermissionUi()
+    }
 }
