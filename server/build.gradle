@@ -1,7 +1,7 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm'
-    id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version"
     id 'application'
+    alias libs.plugins.kotlin.jvm
+    alias libs.plugins.serialization
 }
 
 group = "com.wasabicode.notifyxso"
@@ -20,14 +20,8 @@ java {
 
 dependencies {
     implementation project(":server-data")
-
-    implementation "io.ktor:ktor-server-core:$ktor_version"
-    implementation "io.ktor:ktor-server-netty:$ktor_version"
-    implementation "io.ktor:ktor-server-content-negotiation:$ktor_version"
-    implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
-    implementation "ch.qos.logback:logback-classic:$logback_version"
-
-    testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+    implementation libs.bundles.ktor.server
+    testImplementation libs.ktor.server.tests
 }
 
 application {
