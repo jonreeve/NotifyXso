@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion libs.versions.androidCompileSdk.get() as int
 
     defaultConfig {
         applicationId "com.wasabicode.notifyxso"
-        minSdkVersion 22
-        targetSdkVersion 33
+        minSdkVersion libs.versions.androidMinSdk.get() as int
+        targetSdkVersion libs.versions.androidTargetSdk.get() as int
         versionCode 1
         versionName "1.0"
 
